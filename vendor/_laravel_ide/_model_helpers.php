@@ -2251,6 +2251,56 @@ namespace App\Models {
 	/**
 	 * App\Models\Graduate
 	 *
+	 * @property string|null $recent_gross_monthly_earning
+	 * @property string|null $initial_gross_monthly_earning
+	 * @property string|null $time_to_land_job_other
+	 * @property string|null $time_to_land_job
+	 * @property string|null $how_found_first_job_other
+	 * @property string|null $how_found_first_job
+	 * @property string|null $first_job_duration_other
+	 * @property string|null $first_job_duration
+	 * @property string|null $job_change_reasons_other
+	 * @property array|null $job_change_reasons
+	 * @property string|null $unrelated_job_reasons_other
+	 * @property array|null $unrelated_job_reasons
+	 * @property mixed $first_job_related
+	 * @property string|null $reasons_for_unemployment_other
+	 * @property array|null $reasons_for_unemployment
+	 * @property string|null $reasons_for_staying_other
+	 * @property array|null $reasons_for_staying
+	 * @property string|null $business_nature
+	 * @property string|null $business_address
+	 * @property string|null $business_name
+	 * @property array|null $recent_position
+	 * @property array|null $employment_status
+	 * @property string|null $company_address
+	 * @property string|null $company_contact
+	 * @property string|null $company_email
+	 * @property string|null $company_nature
+	 * @property string|null $company_name
+	 * @property mixed $ever_employed
+	 * @property string|null $training_title_3
+	 * @property string|null $training_title_2
+	 * @property string|null $training_title_1
+	 * @property string|null $exam_rating
+	 * @property string|null $exam_year_taken
+	 * @property \Illuminate\Support\Carbon|null $exam_license_date
+	 * @property string|null $exam_name
+	 * @property string|null $advance_study_reasons_other
+	 * @property array|null $advance_study_reasons
+	 * @property \Illuminate\Support\Carbon|null $advance_study_date_graduated
+	 * @property string|null $advance_study_units_earned
+	 * @property string|null $advance_study_date_started
+	 * @property string|null $advance_study_school
+	 * @property string|null $major
+	 * @property string|null $program
+	 * @property string|null $college_campus
+	 * @property mixed $civil_status
+	 * @property mixed $sex
+	 * @property string|null $permanent_address
+	 * @property string|null $middle_name
+	 * @property string|null $first_name
+	 * @property string|null $surname
 	 * @property \Illuminate\Support\Carbon|null $updated_at
 	 * @property \Illuminate\Support\Carbon|null $created_at
 	 * @property mixed $status
@@ -2274,6 +2324,56 @@ namespace App\Models {
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereStatus($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCreatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereUpdatedAt($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereSurname($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereFirstName($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereMiddleName($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate wherePermanentAddress($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereSex($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCivilStatus($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCollegeCampus($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereProgram($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereMajor($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereAdvanceStudySchool($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereAdvanceStudyDateStarted($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereAdvanceStudyUnitsEarned($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereAdvanceStudyDateGraduated($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereAdvanceStudyReasons($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereAdvanceStudyReasonsOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereExamName($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereExamLicenseDate($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereExamYearTaken($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereExamRating($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereTrainingTitle1($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereTrainingTitle2($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereTrainingTitle3($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereEverEmployed($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCompanyName($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCompanyNature($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCompanyEmail($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCompanyContact($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCompanyAddress($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereEmploymentStatus($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereRecentPosition($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereBusinessName($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereBusinessAddress($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereBusinessNature($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereReasonsForStaying($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereReasonsForStayingOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereReasonsForUnemployment($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereReasonsForUnemploymentOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereFirstJobRelated($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereUnrelatedJobReasons($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereUnrelatedJobReasonsOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereJobChangeReasons($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereJobChangeReasonsOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereFirstJobDuration($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereFirstJobDurationOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereHowFoundFirstJob($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereHowFoundFirstJobOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereTimeToLandJob($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereTimeToLandJobOther($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereInitialGrossMonthlyEarning($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereRecentGrossMonthlyEarning($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate newModelQuery()
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate newQuery()
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate query()
@@ -4515,6 +4615,12 @@ namespace App\Models {
 	 * @property string $password
 	 * @property \Illuminate\Support\Carbon|null $email_verified_at
 	 * @property string $role
+	 * @property mixed $status
+	 * @property mixed $department_id
+	 * @property string|null $current_work
+	 * @property string|null $course
+	 * @property mixed $year
+	 * @property string|null $phone
 	 * @property string $email
 	 * @property string $name
 	 * @property int $id
@@ -4524,6 +4630,12 @@ namespace App\Models {
 	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePhone($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereYear($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCourse($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereCurrentWork($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereDepartmentId($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereStatus($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRole($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerifiedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)

@@ -28,7 +28,7 @@ export default function ResetPassword({
 
     return (
         <GuestLayout>
-            <Head title="Reset Password - SSU Alumni Tracker" />
+            <Head title="Reset Password - SSU Alumni Management System" />
 
             <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2">Set New Password</h2>

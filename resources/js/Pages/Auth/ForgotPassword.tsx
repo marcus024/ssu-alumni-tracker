@@ -17,7 +17,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
     return (
         <GuestLayout>
-            <Head title="Forgot Password - SSU Alumni Tracker" />
+            <Head title="Forgot Password - SSU Alumni Management System" />
 
             <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2">Reset Password</h2>

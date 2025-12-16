@@ -22,7 +22,7 @@ export default function Footer() {
                                 <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
                                     SSU
                                 </div>
-                                <span className="text-lg font-bold">Alumni Tracker</span>
+                                <span className="text-lg font-bold">Alumni Management System</span>
                             </div>
                         )}
                         <p className="text-gray-400 text-sm">
@@ -182,7 +182,7 @@ export default function Footer() {
                 {/* Bottom Bar */}
                 <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
                     <p>
-                        © {currentYear} SSU Alumni Tracker. All rights reserved.
+                        © {currentYear} SSU Alumni Management System. All rights reserved.
                     </p>
                     <p className="mt-2">
                         Made with ❤️ for our alumni community

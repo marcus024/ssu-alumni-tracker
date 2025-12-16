@@ -63,7 +63,7 @@ export default function Home({
 
     return (
         <>
-            <Head title="SSU Alumni Tracker" />
+            <Head title="SSU Alumni Management System" />
 
             <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
                 <Header isDark={isDark} toggleTheme={toggleTheme} />

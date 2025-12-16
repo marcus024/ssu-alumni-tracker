@@ -62,7 +62,7 @@ export default function Header({ isDark, toggleTheme }: HeaderProps) {
                                     SSU
                                 </div>
                                 <span className={`text-xl font-bold ${isScrolled || isDark ? 'text-gray-900 dark:text-white' : 'text-white'}`}>
-                                    Alumni Tracker
+                                    Alumni Management System
                                 </span>
                             </>
                         )}

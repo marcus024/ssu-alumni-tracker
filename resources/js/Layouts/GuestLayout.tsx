@@ -1,9 +1,13 @@
 import { Link } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
 
-export default function Guest({ children }: PropsWithChildren) {
+interface GuestProps extends PropsWithChildren {
+    wide?: boolean;
+}
+
+export default function Guest({ children, wide = false }: GuestProps) {
     return (
-        <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
             {/* Animated Background - matching public theme */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-gray-900">
                 <div className="absolute inset-0 bg-black/30"></div>
@@ -13,12 +17,12 @@ export default function Guest({ children }: PropsWithChildren) {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 w-full max-w-md px-6">
+            <div className={`relative z-10 w-full ${wide ? 'max-w-7xl' : 'max-w-md'} px-6`}>
                 {/* Logo/Brand */}
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-block">
                         <h1 className="text-4xl font-bold text-white mb-2">
-                            SSU Alumni Tracker
+                            SSU Alumni Management System
                         </h1>
                         <p className="text-white/80 text-sm">
                             Connecting Alumni, Building Futures

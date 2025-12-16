@@ -28,7 +28,7 @@ export default function Login({
 
     return (
         <GuestLayout>
-            <Head title="Login - SSU Alumni Tracker" />
+            <Head title="Login - SSU Alumni Management System" />
 
             <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2">Welcome Back</h2>

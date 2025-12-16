@@ -40,7 +40,7 @@ export default function DepartmentDetails({ department, schoolInfo }: Department
 
     return (
         <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-            <Head title={`${department.name} - SSU Alumni Tracker`} />
+            <Head title={`${department.name} - SSU Alumni Management System`} />
 
             <Header isDark={isDark} toggleTheme={toggleTheme} />
 
