@@ -117,7 +117,18 @@ class RegisteredUserController extends Controller
             // Salary
             'initial_gross_monthly_earning' => 'nullable|string|max:255',
             'recent_gross_monthly_earning' => 'nullable|string|max:255',
+
+            // Profile Picture
+            'profile_picture' => 'nullable|image|max:2048', // Max 2MB
         ]);
+
+        // Handle profile picture upload
+        $profilePicturePath = null;
+        if ($request->hasFile('profile_picture')) {
+            $profilePicture = $request->file('profile_picture');
+            $filename = time() . '_' . $profilePicture->getClientOriginalName();
+            $profilePicturePath = $profilePicture->storeAs('profile_pictures', $filename, 'public');
+        }
 
         // Compose full name from parts
         $fullName = trim($validated['first_name'] . ' ' . ($validated['middle_name'] ?? '') . ' ' . $validated['surname']);
@@ -206,6 +217,9 @@ class RegisteredUserController extends Controller
             'time_to_land_job_other' => $validated['time_to_land_job_other'],
             'initial_gross_monthly_earning' => $validated['initial_gross_monthly_earning'],
             'recent_gross_monthly_earning' => $validated['recent_gross_monthly_earning'],
+
+            // Profile Picture
+            'profile_picture' => $profilePicturePath,
         ]);
 
         event(new Registered($user));

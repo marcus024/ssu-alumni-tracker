@@ -2303,6 +2303,7 @@ namespace App\Models {
 	 * @property string|null $surname
 	 * @property \Illuminate\Support\Carbon|null $updated_at
 	 * @property \Illuminate\Support\Carbon|null $created_at
+	 * @property string|null $profile_picture
 	 * @property mixed $status
 	 * @property mixed $department_id
 	 * @property string $current_work
@@ -2322,6 +2323,7 @@ namespace App\Models {
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCurrentWork($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereDepartmentId($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereStatus($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereProfilePicture($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereCreatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereUpdatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Graduate>|Graduate whereSurname($value)

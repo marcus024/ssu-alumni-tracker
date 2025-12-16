@@ -16,6 +16,7 @@ interface GraduateRegistrationModalProps {
 export default function GraduateRegistrationModal({ show, onClose, departments }: GraduateRegistrationModalProps) {
     const [showSuccess, setShowSuccess] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
+    const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
     const totalSteps = 5;
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -96,6 +97,9 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
         // Salary
         initial_gross_monthly_earning: '',
         recent_gross_monthly_earning: '',
+
+        // Profile Picture
+        profile_picture: null as File | null,
     });
 
     const handleCheckboxChange = (field: keyof typeof data, value: string) => {
@@ -104,6 +108,18 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
             ? currentArray.filter(item => item !== value)
             : [...currentArray, value];
         setData(field, newArray as any);
+    };
+
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('profile_picture', file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePicturePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const submit: FormEventHandler = (e) => {
@@ -184,6 +200,55 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
                         {currentStep === 1 && (
                             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">General Information</h3>
+
+                                {/* Profile Picture Upload */}
+                                <div className="flex flex-col items-center space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="text-center">
+                                        <label className={labelClass}>Profile Picture</label>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Upload a professional photo (optional)</p>
+                                    </div>
+                                    {profilePicturePreview ? (
+                                        <div className="relative">
+                                            <img
+                                                src={profilePicturePreview}
+                                                alt="Profile Preview"
+                                                className="w-32 h-32 rounded-full object-cover border-4 border-indigo-500 dark:border-indigo-400"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setProfilePicturePreview(null);
+                                                    setData('profile_picture', null);
+                                                }}
+                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center border-4 border-dashed border-gray-300 dark:border-gray-600">
+                                            <svg className="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    <input
+                                        type="file"
+                                        id="profile_picture"
+                                        accept="image/*"
+                                        onChange={handleProfilePictureChange}
+                                        className="hidden"
+                                    />
+                                    <label
+                                        htmlFor="profile_picture"
+                                        className="cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition text-sm"
+                                    >
+                                        {profilePicturePreview ? 'Change Photo' : 'Upload Photo'}
+                                    </label>
+                                    <InputError message={errors.profile_picture} className="mt-2" />
+                                </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>

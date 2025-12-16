@@ -15,6 +15,7 @@ class Graduate extends Model
         'current_work',
         'department_id',
         'status',
+        'profile_picture',
         // Section A: General Information
         'surname',
         'first_name',

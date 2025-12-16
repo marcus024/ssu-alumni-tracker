@@ -96,7 +96,18 @@ class GraduateRegistrationController extends Controller
             // Salary
             'initial_gross_monthly_earning' => 'nullable|string|max:255',
             'recent_gross_monthly_earning' => 'nullable|string|max:255',
+
+            // Profile Picture
+            'profile_picture' => 'nullable|image|max:2048', // Max 2MB
         ]);
+
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            $profilePicture = $request->file('profile_picture');
+            $filename = time() . '_' . $profilePicture->getClientOriginalName();
+            $path = $profilePicture->storeAs('profile_pictures', $filename, 'public');
+            $validated['profile_picture'] = $path;
+        }
 
         // Compose full name from surname, first_name, and middle_name
         $validated['name'] = trim($validated['surname'] . ', ' . $validated['first_name'] . ' ' . ($validated['middle_name'] ?? ''));

@@ -78,10 +78,12 @@ interface FormData {
     initial_gross_monthly_earning: string;
     recent_gross_monthly_earning: string;
     role: string;
+    profile_picture: File | null;
 }
 
 export default function Register({ departments }: RegisterProps) {
     const [currentStep, setCurrentStep] = useState(1);
+    const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
     const totalSteps = 5;
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
@@ -144,6 +146,7 @@ export default function Register({ departments }: RegisterProps) {
         initial_gross_monthly_earning: '',
         recent_gross_monthly_earning: '',
         role: 'graduate',
+        profile_picture: null,
     });
 
     // Form Options from Google Form
@@ -229,6 +232,18 @@ export default function Register({ departments }: RegisterProps) {
         setData(field, newArray as any);
     };
 
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('profile_picture', file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfilePicturePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const nextStep = () => {
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
@@ -281,6 +296,55 @@ export default function Register({ departments }: RegisterProps) {
                         <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2">
                             Account & General Information
                         </h3>
+
+                        {/* Profile Picture Upload */}
+                        <div className="flex flex-col items-center space-y-4 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10">
+                            <div className="text-center">
+                                <label className={labelClass}>Profile Picture</label>
+                                <p className="text-xs text-white/50">Upload a professional photo (optional)</p>
+                            </div>
+                            {profilePicturePreview ? (
+                                <div className="relative">
+                                    <img
+                                        src={profilePicturePreview}
+                                        alt="Profile Preview"
+                                        className="w-32 h-32 rounded-full object-cover border-4 border-blue-400"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setProfilePicturePreview(null);
+                                            setData('profile_picture', null);
+                                        }}
+                                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center border-4 border-dashed border-white/20">
+                                    <svg className="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                id="profile_picture"
+                                accept="image/*"
+                                onChange={handleProfilePictureChange}
+                                className="hidden"
+                            />
+                            <label
+                                htmlFor="profile_picture"
+                                className="cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
+                            >
+                                {profilePicturePreview ? 'Change Photo' : 'Upload Photo'}
+                            </label>
+                            <InputError message={errors.profile_picture} className="mt-2 text-red-300" />
+                        </div>
 
                         <div className="grid grid-cols-3 gap-4">
                             <div>
