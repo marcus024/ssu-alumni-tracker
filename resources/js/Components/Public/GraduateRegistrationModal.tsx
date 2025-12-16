@@ -132,10 +132,11 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
 
     const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
     const inputClass = "mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500";
-    const selectClass = "mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500";
+    const selectClass = "mt-1 block w-full border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 [&>option]:bg-white dark:[&>option]:bg-gray-800 [&>option]:text-gray-900 dark:[&>option]:text-gray-100";
 
-    // Dropdown options
-    const yearOptions = Array.from({ length: 15 }, (_, i) => 2024 - i);
+    // Dropdown options - Dynamic year from current year back to 1950
+    const currentYear = new Date().getFullYear();
+    const yearOptions = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i);
     const collegeOptions = ['COED', 'CAS', 'COENG', 'College of Industrial Technology', 'CONHS', 'Mercedes Campus', 'Paranas Campus', 'Graduate School'];
     const programOptions = ['BS Psychology', 'BSIT', 'BSN', 'PhD in Education', 'BSED', 'BEED', 'BSBA', 'BS Biology', 'BS Chemistry', 'BS Mathematics', 'BS Environmental Science', 'AB Political Science', 'AB English', 'AB Filipino', 'BSME', 'BSCE', 'BSEE', 'BSCpE', 'BSIE', 'Bachelor of Public Administration', 'BSA', 'BSF', 'BSFT', 'BSCrim', 'Master in Public Administration', 'Master in Business Administration', 'Master in Nursing', 'Master in Information Technology', 'Master of Arts in Education', 'Doctor of Education', 'Doctor of Philosophy', 'Others'];
     const majorOptions = ['Mathematics', 'English', 'Filipino', 'Science', 'Social Studies', 'TLE', 'MAPEH', 'Pre-school Education', 'Special Education', 'Educational Management', 'Guidance and Counseling', 'N/A', 'Others'];

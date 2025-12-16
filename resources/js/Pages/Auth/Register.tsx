@@ -147,7 +147,8 @@ export default function Register({ departments }: RegisterProps) {
     });
 
     // Form Options from Google Form
-    const yearOptions = Array.from({ length: 15 }, (_, i) => 2024 - i);
+    const currentYear = new Date().getFullYear();
+    const yearOptions = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i);
     const collegeOptions = ['COED', 'CAS', 'COENG', 'College of Industrial Technology', 'CONHS', 'Mercedes Campus', 'Paranas Campus', 'Graduate School'];
     const programOptions = ['BS Psychology', 'BSIT', 'BSN', 'PhD in Education', 'Master in Education', 'BS Computer Science', 'BS Information Systems',
         'BS Business Administration', 'BS Accountancy', 'BS Civil Engineering', 'BS Electrical Engineering', 'BS Electronics Engineering',
@@ -251,7 +252,7 @@ export default function Register({ departments }: RegisterProps) {
 
     const inputClass = "w-full bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-blue-400 focus:ring-blue-400 rounded-md shadow-sm";
     const labelClass = "block text-sm font-medium text-white mb-2";
-    const selectClass = "w-full bg-white/10 border-white/20 text-white rounded-md shadow-sm focus:border-blue-400 focus:ring-blue-400";
+    const selectClass = "w-full bg-white/10 border-white/20 text-white rounded-md shadow-sm focus:border-blue-400 focus:ring-blue-400 [&>option]:bg-gray-800 [&>option]:text-white";
 
     return (
         <GuestLayout wide={true}>
