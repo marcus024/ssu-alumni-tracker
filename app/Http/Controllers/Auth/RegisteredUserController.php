@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'departments' => Department::all(),
+        ]);
     }
 
     /**
@@ -34,18 +37,36 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => 'required|string|max:255',
+            'year' => 'required|integer|min:1900|max:' . (date('Y') + 10),
+            'course' => 'required|string|max:255',
+            'current_work' => 'required|string|max:255',
+            'department_id' => 'required|exists:departments,id',
+            'role' => 'required|in:admin,graduate',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'phone' => $request->phone,
+            'year' => $request->year,
+            'course' => $request->course,
+            'current_work' => $request->current_work,
+            'department_id' => $request->department_id,
+            'status' => 'pending', // Graduate accounts need approval
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect based on role
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('graduate.dashboard');
     }
 }

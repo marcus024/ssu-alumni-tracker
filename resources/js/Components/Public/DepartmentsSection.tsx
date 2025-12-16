@@ -1,6 +1,7 @@
 import { Department } from '@/types';
 import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface DepartmentsSectionProps {
     departments: Department[];
@@ -12,14 +13,20 @@ export default function DepartmentsSection({ departments }: DepartmentsSectionPr
     return (
         <section id="departments" className="py-20 bg-gray-50 dark:bg-gray-800">
             <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
+                <motion.div
+                    className="text-center mb-16"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
                         Our Departments
                     </h2>
                     <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                         Explore our diverse academic departments and programs
                     </p>
-                </div>
+                </motion.div>
 
                 {departments.length > 0 ? (
                     <div className="max-w-6xl mx-auto">
@@ -41,8 +48,16 @@ export default function DepartmentsSection({ departments }: DepartmentsSectionPr
                         </div>
 
                         {/* Active Department Content */}
-                        {departments[activeTab] && (
-                            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 md:p-12">
+                        <AnimatePresence mode="wait">
+                            {departments[activeTab] && (
+                                <motion.div
+                                    key={activeTab}
+                                    className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 md:p-12"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
                                 <div className="grid md:grid-cols-3 gap-8">
                                     {/* Department Logo */}
                                     <div className="md:col-span-1 flex flex-col items-center">
@@ -95,8 +110,9 @@ export default function DepartmentsSection({ departments }: DepartmentsSectionPr
                                         </Link>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         )}
+                        </AnimatePresence>
                     </div>
                 ) : (
                     <div className="text-center py-20">

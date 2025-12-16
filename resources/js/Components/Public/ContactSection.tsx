@@ -170,13 +170,28 @@ export default function ContactSection() {
                             </div>
                         </div>
 
-                        {/* Map Placeholder */}
-                        <div className="bg-gray-200 dark:bg-gray-700 rounded-xl h-64 flex items-center justify-center">
-                            <div className="text-center">
-                                <span className="text-4xl mb-2 block">🗺️</span>
-                                <p className="text-gray-600 dark:text-gray-400">Map integration placeholder</p>
-                            </div>
+                        {/* Interactive Map */}
+                        <div className="rounded-xl overflow-hidden shadow-lg h-64">
+                            <iframe
+                                src="https://www.openstreetmap.org/export/embed.html?bbox=124.8800%2C11.7720%2C124.8900%2C11.7780&layer=mapnik&marker=11.7750%2C124.8850"
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                loading="lazy"
+                                title="SSU Location Map - Arteche Blvd, Guindapunan, Catbalogan"
+                            ></iframe>
                         </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+                            <span className="block mb-1">Arteche Blvd, Brgy. Guindapunan, City of Catbalogan, 6700 Samar</span>
+                            <a
+                                href="https://www.openstreetmap.org/?mlat=11.7750&mlon=124.8850#map=16/11.7750/124.8850"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-blue-600 dark:hover:text-blue-400"
+                            >
+                                View larger map
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>

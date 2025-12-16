@@ -8,10 +8,13 @@ class Graduate extends Model
 {
     protected $fillable = [
         'name',
+        'email',
+        'phone',
         'year',
         'course',
         'current_work',
         'department_id',
+        'status',
     ];
 
     public function department()

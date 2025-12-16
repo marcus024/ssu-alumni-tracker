@@ -25,6 +25,11 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'year' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 10)],
+            'course' => ['nullable', 'string', 'max:255'],
+            'current_work' => ['nullable', 'string', 'max:255'],
+            'department_id' => ['nullable', 'exists:departments,id'],
         ];
     }
 }

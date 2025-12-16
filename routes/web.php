@@ -8,6 +8,10 @@ use App\Models\Graduate;
 use App\Models\GalleryImage;
 use App\Models\SchoolInfo;
 use App\Models\Contact;
+use App\Models\Event;
+use App\Models\FundRaising;
+use App\Models\Post;
+use App\Models\ChatMessage;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,9 +21,11 @@ Route::get('/', function () {
         'news' => News::latest()->get(),
         'jobPosts' => JobPost::latest()->get(),
         'departments' => Department::all(),
-        'graduates' => Graduate::with('department')->latest()->get(),
+        'graduates' => Graduate::with('department')->where('status', 'approved')->latest()->get(),
         'galleryImages' => GalleryImage::latest()->get(),
         'schoolInfo' => SchoolInfo::first(),
+        'events' => Event::where('is_active', true)->orderBy('event_date', 'asc')->get(),
+        'fundraisings' => FundRaising::where('is_active', true)->latest()->get(),
     ]);
 });
 
@@ -35,9 +41,29 @@ Route::post('/contact', function () {
     return redirect()->back();
 })->name('contact.store');
 
-// Redirect /dashboard to admin dashboard
+Route::post('/donate', [App\Http\Controllers\DonationController::class, 'store'])->name('donate.store');
+
+Route::post('/job-applications', [App\Http\Controllers\JobApplicationController::class, 'store'])->name('job-applications.store');
+
+Route::post('/graduate/register', [App\Http\Controllers\GraduateRegistrationController::class, 'store'])->name('graduate.register');
+
+// Public Department Details
+Route::get('/departments/{department}', function (Department $department) {
+    return Inertia::render('DepartmentDetails', [
+        'department' => $department->load('graduates'),
+        'schoolInfo' => SchoolInfo::first(),
+    ]);
+})->name('departments.show');
+
+// Redirect /dashboard based on user role
 Route::get('/dashboard', function () {
-    return redirect('/admin/dashboard');
+    $user = auth()->user();
+
+    if ($user && $user->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('graduate.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Profile routes
@@ -47,9 +73,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Graduate routes
+Route::prefix('graduate')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Graduate\DashboardController::class, 'index'])->name('graduate.dashboard');
+});
+
 // Admin routes
-Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+
+    // Analytics routes
+    Route::get('/analytics', [App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('admin.analytics.index');
 
     // News routes
     Route::resource('news', App\Http\Controllers\Admin\NewsController::class)->names([
@@ -94,6 +128,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         'update' => 'admin.graduates.update',
         'destroy' => 'admin.graduates.destroy',
     ]);
+    Route::patch('/graduates/{graduate}/status', [App\Http\Controllers\Admin\GraduateController::class, 'updateStatus'])->name('admin.graduates.updateStatus');
 
     // Gallery routes
     Route::resource('gallery', App\Http\Controllers\Admin\GalleryController::class)->names([
@@ -114,6 +149,77 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/contacts', [App\Http\Controllers\Admin\ContactController::class, 'index'])->name('admin.contacts.index');
     Route::get('/contacts/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'show'])->name('admin.contacts.show');
     Route::delete('/contacts/{contact}', [App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('admin.contacts.destroy');
+
+    // Events routes
+    Route::resource('events', App\Http\Controllers\Admin\EventController::class)->names([
+        'index' => 'admin.events.index',
+        'create' => 'admin.events.create',
+        'store' => 'admin.events.store',
+        'show' => 'admin.events.show',
+        'edit' => 'admin.events.edit',
+        'update' => 'admin.events.update',
+        'destroy' => 'admin.events.destroy',
+    ]);
+
+    // FundRaising routes
+    Route::resource('fundraisings', App\Http\Controllers\Admin\FundRaisingController::class)->names([
+        'index' => 'admin.fundraisings.index',
+        'create' => 'admin.fundraisings.create',
+        'store' => 'admin.fundraisings.store',
+        'show' => 'admin.fundraisings.show',
+        'edit' => 'admin.fundraisings.edit',
+        'update' => 'admin.fundraisings.update',
+        'destroy' => 'admin.fundraisings.destroy',
+    ]);
+
+    // Posts routes
+    Route::resource('posts', App\Http\Controllers\Admin\PostController::class)->names([
+        'index' => 'admin.posts.index',
+        'create' => 'admin.posts.create',
+        'store' => 'admin.posts.store',
+        'show' => 'admin.posts.show',
+        'edit' => 'admin.posts.edit',
+        'update' => 'admin.posts.update',
+        'destroy' => 'admin.posts.destroy',
+    ]);
+
+    // Users routes
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class)->names([
+        'index' => 'admin.users.index',
+        'create' => 'admin.users.create',
+        'store' => 'admin.users.store',
+        'show' => 'admin.users.show',
+        'edit' => 'admin.users.edit',
+        'update' => 'admin.users.update',
+        'destroy' => 'admin.users.destroy',
+    ]);
+
+    // Chat routes
+    Route::get('/chat', [App\Http\Controllers\Admin\ChatController::class, 'index'])->name('admin.chat.index');
+    Route::post('/chat', [App\Http\Controllers\Admin\ChatController::class, 'store'])->name('admin.chat.store');
+    Route::get('/chat/messages', [App\Http\Controllers\Admin\ChatController::class, 'messages'])->name('admin.chat.messages');
+
+    // Settings routes
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
+    Route::patch('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
+
+    // Site Customization routes
+    Route::get('/customization', [App\Http\Controllers\Admin\SiteCustomizationController::class, 'index'])->name('admin.customization.index');
+    Route::post('/customization', [App\Http\Controllers\Admin\SiteCustomizationController::class, 'update'])->name('admin.customization.update');
+
+    // Job Applications routes
+    Route::get('/job-applications', [App\Http\Controllers\Admin\JobApplicationController::class, 'index'])->name('admin.job-applications.index');
+    Route::get('/job-applications/{application}', [App\Http\Controllers\Admin\JobApplicationController::class, 'show'])->name('admin.job-applications.show');
+    Route::patch('/job-applications/{application}/status', [App\Http\Controllers\Admin\JobApplicationController::class, 'updateStatus'])->name('admin.job-applications.updateStatus');
+
+    // Donations routes
+    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
+    Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+
+    // Live View route
+    Route::get('/live-view', function () {
+        return Inertia::render('Admin/LiveView');
+    })->name('admin.live-view');
 });
 
 require __DIR__.'/auth.php';

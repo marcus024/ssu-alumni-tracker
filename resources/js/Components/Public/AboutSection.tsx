@@ -1,4 +1,5 @@
 import { SchoolInfo } from '@/types';
+import { motion } from 'framer-motion';
 
 interface AboutSectionProps {
     schoolInfo: SchoolInfo | null;
@@ -13,14 +14,20 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
     return (
         <section id="about" className="py-20 bg-gray-50 dark:bg-gray-800">
             <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
+                <motion.div
+                    className="text-center mb-16"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
                         About SSU
                     </h2>
                     <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                         Discover our mission, vision, and commitment to excellence
                     </p>
-                </div>
+                </motion.div>
 
                 {schoolInfo ? (
                     <div className="max-w-6xl mx-auto">
@@ -48,38 +55,67 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
                             </div>
 
                             {/* Statistics Grid */}
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center">
+                            <motion.div
+                                className="grid grid-cols-2 gap-6"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
+                            >
+                                <motion.div
+                                    className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center"
+                                    whileHover={{ scale: 1.05, y: -5 }}
+                                    transition={{ duration: 0.3 }}
+                                >
                                     <div className="text-4xl font-bold text-blue-600 mb-2">
                                         {schoolInfo.total_teachers}
                                     </div>
                                     <div className="text-gray-600 dark:text-gray-400">Teachers & Staff</div>
-                                </div>
-                                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center">
+                                </motion.div>
+                                <motion.div
+                                    className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center"
+                                    whileHover={{ scale: 1.05, y: -5 }}
+                                    transition={{ duration: 0.3 }}
+                                >
                                     <div className="text-4xl font-bold text-blue-600 mb-2">
                                         {schoolInfo.total_departments}
                                     </div>
                                     <div className="text-gray-600 dark:text-gray-400">Departments</div>
-                                </div>
-                                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center">
+                                </motion.div>
+                                <motion.div
+                                    className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center"
+                                    whileHover={{ scale: 1.05, y: -5 }}
+                                    transition={{ duration: 0.3 }}
+                                >
                                     <div className="text-4xl font-bold text-blue-600 mb-2">
                                         {schoolInfo.total_branches}
                                     </div>
                                     <div className="text-gray-600 dark:text-gray-400">Branches</div>
-                                </div>
-                                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center">
+                                </motion.div>
+                                <motion.div
+                                    className="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg text-center"
+                                    whileHover={{ scale: 1.05, y: -5 }}
+                                    transition={{ duration: 0.3 }}
+                                >
                                     <div className="text-4xl font-bold text-blue-600 mb-2">
                                         {yearsInOperation}+
                                     </div>
                                     <div className="text-gray-600 dark:text-gray-400">Years</div>
-                                </div>
-                            </div>
+                                </motion.div>
+                            </motion.div>
                         </div>
 
                         {/* Mission and Vision */}
                         <div className="grid md:grid-cols-2 gap-8">
                             {/* Mission */}
-                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+                            <motion.div
+                                className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg"
+                                initial={{ opacity: 0, x: -50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: 0.3 }}
+                                whileHover={{ scale: 1.02 }}
+                            >
                                 <div className="flex items-center mb-4">
                                     <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-4">
                                         <span className="text-2xl">🎯</span>
@@ -91,10 +127,17 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
                                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                                     {schoolInfo.mission}
                                 </p>
-                            </div>
+                            </motion.div>
 
                             {/* Vision */}
-                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+                            <motion.div
+                                className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg"
+                                initial={{ opacity: 0, x: 50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: 0.4 }}
+                                whileHover={{ scale: 1.02 }}
+                            >
                                 <div className="flex items-center mb-4">
                                     <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-4">
                                         <span className="text-2xl">👁️</span>
@@ -106,7 +149,7 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
                                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                                     {schoolInfo.vision}
                                 </p>
-                            </div>
+                            </motion.div>
                         </div>
                     </div>
                 ) : (

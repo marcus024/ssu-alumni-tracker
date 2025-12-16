@@ -1,338 +1,350 @@
 import { Head, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-interface DashboardStats {
-    totalNews: number;
-    totalJobPosts: number;
-    totalDepartments: number;
-    totalGraduates: number;
-    totalContacts: number;
-    totalGalleryImages: number;
-}
-
-interface RecentActivity {
-    news: Array<{ id: number; title: string; created_at: string }>;
-    jobPosts: Array<{ id: number; title: string; company: string; created_at: string }>;
-    contacts: Array<{ id: number; name: string; email: string; created_at: string }>;
+interface DashboardProps {
+    stats: {
+        totalUsers: number;
+        totalGraduates: number;
+        activeEvents: number;
+        activeFundraisings: number;
+        totalJobApplications: number;
+        pendingDonations: number;
+    };
+    activityTrend: Array<{ date: string; users: number; graduates: number; contacts: number }>;
+    departmentStats: Array<{ name: string; count: number }>;
+    fundraisingProgress: Array<{ title: string; percentage: number; raised: number; goal: number }>;
+    jobApplicationStats: {
+        pending: number;
+        reviewing: number;
+        shortlisted: number;
+        interview: number;
+        offered: number;
+        rejected: number;
+    };
+    recentActivity: {
+        jobApplications: Array<any>;
+        donations: Array<any>;
+    };
 }
 
 export default function Dashboard({
     stats,
+    activityTrend,
+    departmentStats,
+    fundraisingProgress,
+    jobApplicationStats,
     recentActivity,
-}: {
-    stats: DashboardStats;
-    recentActivity: RecentActivity;
-}) {
-    const statCards = [
-        {
-            name: 'Total News',
-            value: stats.totalNews,
-            icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z',
-            link: '/admin/news',
-            color: 'blue',
-        },
-        {
-            name: 'Job Posts',
-            value: stats.totalJobPosts,
-            icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-            link: '/admin/job-posts',
-            color: 'green',
-        },
-        {
-            name: 'Departments',
-            value: stats.totalDepartments,
-            icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
-            link: '/admin/departments',
-            color: 'purple',
-        },
-        {
-            name: 'Graduates',
-            value: stats.totalGraduates,
-            icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
-            link: '/admin/graduates',
-            color: 'yellow',
-        },
-        {
-            name: 'Gallery Images',
-            value: stats.totalGalleryImages,
-            icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z',
-            link: '/admin/gallery',
-            color: 'pink',
-        },
-        {
-            name: 'Contact Messages',
-            value: stats.totalContacts,
-            icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-            link: '/admin/contacts',
-            color: 'red',
-        },
-    ];
-
-    const getColorClasses = (color: string) => {
-        const colors: Record<string, { bg: string; text: string; hover: string }> = {
-            blue: { bg: 'bg-blue-500', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
-            green: { bg: 'bg-green-500', text: 'text-green-600', hover: 'hover:bg-green-50' },
-            purple: { bg: 'bg-purple-500', text: 'text-purple-600', hover: 'hover:bg-purple-50' },
-            yellow: { bg: 'bg-yellow-500', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' },
-            pink: { bg: 'bg-pink-500', text: 'text-pink-600', hover: 'hover:bg-pink-50' },
-            red: { bg: 'bg-red-500', text: 'text-red-600', hover: 'hover:bg-red-50' },
-        };
-        return colors[color];
+}: DashboardProps) {
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+        }).format(amount);
     };
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-        });
+    // Calculate max value for activity trend chart
+    const maxValue = Math.max(
+        ...activityTrend.map((d) => Math.max(d.users, d.graduates, d.contacts)),
+        1
+    );
+
+    // Calculate max for department chart
+    const maxDeptCount = Math.max(...departmentStats.map((d) => d.count), 1);
+
+    const statusColors: Record<string, string> = {
+        pending: '#EAB308',
+        reviewing: '#3B82F6',
+        shortlisted: '#8B5CF6',
+        interview: '#6366F1',
+        offered: '#10B981',
+        rejected: '#EF4444',
     };
 
     return (
         <AdminLayout header="Dashboard">
-            <Head title="Admin Dashboard" />
+            <Head title="Dashboard" />
 
-            {/* Welcome message */}
-            <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    Welcome back!
-                </h2>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
-                    Here's what's happening with SSU Alumni Tracker today.
-                </p>
+            {/* Key Stats Cards - Only 6 important ones */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <Link
+                    href="/admin/users"
+                    className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-blue-100 text-sm font-medium">Total Users</p>
+                            <p className="text-4xl font-bold mt-2">{stats.totalUsers}</p>
+                        </div>
+                        <div className="bg-white bg-opacity-20 rounded-full p-4">
+                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link
+                    href="/admin/graduates"
+                    className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-green-100 text-sm font-medium">Total Graduates</p>
+                            <p className="text-4xl font-bold mt-2">{stats.totalGraduates}</p>
+                        </div>
+                        <div className="bg-white bg-opacity-20 rounded-full p-4">
+                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link
+                    href="/admin/events"
+                    className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-purple-100 text-sm font-medium">Active Events</p>
+                            <p className="text-4xl font-bold mt-2">{stats.activeEvents}</p>
+                        </div>
+                        <div className="bg-white bg-opacity-20 rounded-full p-4">
+                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link
+                    href="/admin/fundraisings"
+                    className="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-yellow-100 text-sm font-medium">Active Fundraising</p>
+                            <p className="text-4xl font-bold mt-2">{stats.activeFundraisings}</p>
+                        </div>
+                        <div className="bg-white bg-opacity-20 rounded-full p-4">
+                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link
+                    href="/admin/job-applications"
+                    className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-indigo-100 text-sm font-medium">Job Applications</p>
+                            <p className="text-4xl font-bold mt-2">{stats.totalJobApplications}</p>
+                        </div>
+                        <div className="bg-white bg-opacity-20 rounded-full p-4">
+                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
+
+                <Link
+                    href="/admin/donations"
+                    className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
+                >
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-red-100 text-sm font-medium">Pending Donations</p>
+                            <p className="text-4xl font-bold mt-2">{stats.pendingDonations}</p>
+                        </div>
+                        <div className="bg-white bg-opacity-20 rounded-full p-4">
+                            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </Link>
             </div>
 
-            {/* Statistics Grid */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-                {statCards.map((stat) => {
-                    const colors = getColorClasses(stat.color);
-                    return (
-                        <Link
-                            key={stat.name}
-                            href={stat.link}
-                            className={`bg-white dark:bg-gray-800 rounded-lg shadow p-6 transition-all ${colors.hover} dark:hover:bg-gray-700`}
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                        {stat.name}
-                                    </p>
-                                    <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                                        {stat.value}
-                                    </p>
-                                </div>
-                                <div className={`p-3 rounded-full ${colors.bg} bg-opacity-10`}>
-                                    <svg
-                                        className={`h-8 w-8 ${colors.text}`}
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d={stat.icon}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Activity Trend Chart */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Activity Trend (Last 7 Days)
+                    </h3>
+                    <div className="h-64">
+                        <svg className="w-full h-full" viewBox="0 0 400 200">
+                            {/* Grid lines */}
+                            {[0, 1, 2, 3, 4].map((i) => (
+                                <line
+                                    key={i}
+                                    x1="40"
+                                    y1={20 + i * 40}
+                                    x2="380"
+                                    y2={20 + i * 40}
+                                    stroke="#e5e7eb"
+                                    strokeWidth="1"
+                                />
+                            ))}
+
+                            {/* Y-axis labels */}
+                            {[0, 1, 2, 3, 4].map((i) => (
+                                <text
+                                    key={i}
+                                    x="30"
+                                    y={25 + i * 40}
+                                    className="text-xs fill-gray-500"
+                                    textAnchor="end"
+                                >
+                                    {Math.round((4 - i) * (maxValue / 4))}
+                                </text>
+                            ))}
+
+                            {/* Lines */}
+                            {activityTrend.map((point, i) => {
+                                if (i === 0) return null;
+                                const prevPoint = activityTrend[i - 1];
+                                const x1 = 60 + (i - 1) * 50;
+                                const x2 = 60 + i * 50;
+                                return (
+                                    <g key={i}>
+                                        <line
+                                            x1={x1}
+                                            y1={180 - (prevPoint.users / maxValue) * 160}
+                                            x2={x2}
+                                            y2={180 - (point.users / maxValue) * 160}
+                                            stroke="#3B82F6"
+                                            strokeWidth="2"
                                         />
-                                    </svg>
+                                        <line
+                                            x1={x1}
+                                            y1={180 - (prevPoint.graduates / maxValue) * 160}
+                                            x2={x2}
+                                            y2={180 - (point.graduates / maxValue) * 160}
+                                            stroke="#10B981"
+                                            strokeWidth="2"
+                                        />
+                                    </g>
+                                );
+                            })}
+
+                            {/* X-axis labels */}
+                            {activityTrend.map((point, i) => (
+                                <text
+                                    key={i}
+                                    x={60 + i * 50}
+                                    y="195"
+                                    className="text-xs fill-gray-500"
+                                    textAnchor="middle"
+                                >
+                                    {point.date}
+                                </text>
+                            ))}
+                        </svg>
+                    </div>
+                    <div className="flex items-center justify-center gap-4 mt-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Users</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Graduates</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Department Graduates Bar Chart */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Graduates by Department
+                    </h3>
+                    <div className="space-y-3">
+                        {departmentStats.map((dept) => (
+                            <div key={dept.name}>
+                                <div className="flex items-center justify-between mb-1">
+                                    <span className="text-sm text-gray-700 dark:text-gray-300">{dept.name}</span>
+                                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{dept.count}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                    <div
+                                        className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all"
+                                        style={{ width: `${(dept.count / maxDeptCount) * 100}%` }}
+                                    ></div>
                                 </div>
                             </div>
-                        </Link>
-                    );
-                })}
+                        ))}
+                    </div>
+                </div>
             </div>
 
-            {/* Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent News */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            Recent News
-                        </h3>
-                        <Link
-                            href="/admin/news"
-                            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                            View all
-                        </Link>
-                    </div>
-                    <div className="p-6">
-                        {recentActivity.news.length > 0 ? (
-                            <div className="space-y-4">
-                                {recentActivity.news.map((item) => (
-                                    <div key={item.id} className="flex items-start space-x-3">
-                                        <div className="flex-shrink-0">
-                                            <div className="h-2 w-2 rounded-full bg-blue-500 mt-2"></div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <Link
-                                                href={`/admin/news/${item.id}/edit`}
-                                                className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-                                            >
-                                                {item.title}
-                                            </Link>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                {formatDate(item.created_at)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
+                {/* Job Application Status Breakdown */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Job Application Status
+                    </h3>
+                    <div className="space-y-2">
+                        {Object.entries(jobApplicationStats).map(([status, count]) => (
+                            <div key={status} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        className="w-3 h-3 rounded-full"
+                                        style={{ backgroundColor: statusColors[status] }}
+                                    ></div>
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                        {status}
+                                    </span>
+                                </div>
+                                <span className="text-sm font-bold text-gray-900 dark:text-white">{count}</span>
                             </div>
-                        ) : (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                No news articles yet.
-                            </p>
-                        )}
+                        ))}
                     </div>
                 </div>
 
-                {/* Recent Job Posts */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                {/* Fundraising Progress */}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            Recent Job Posts
+                            Fundraising Progress
                         </h3>
-                        <Link
-                            href="/admin/job-posts"
-                            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
+                        <Link href="/admin/fundraisings" className="text-sm text-blue-600 hover:text-blue-700">
                             View all
                         </Link>
                     </div>
-                    <div className="p-6">
-                        {recentActivity.jobPosts.length > 0 ? (
-                            <div className="space-y-4">
-                                {recentActivity.jobPosts.map((item) => (
-                                    <div key={item.id} className="flex items-start space-x-3">
-                                        <div className="flex-shrink-0">
-                                            <div className="h-2 w-2 rounded-full bg-green-500 mt-2"></div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <Link
-                                                href={`/admin/job-posts/${item.id}/edit`}
-                                                className="text-sm font-medium text-gray-900 dark:text-white hover:text-green-600 dark:hover:text-green-400"
-                                            >
-                                                {item.title}
-                                            </Link>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                {item.company} • {formatDate(item.created_at)}
-                                            </p>
-                                        </div>
+                    <div className="space-y-4">
+                        {fundraisingProgress.length > 0 ? (
+                            fundraisingProgress.map((fr, i) => (
+                                <div key={i}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            {fr.title}
+                                        </span>
+                                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                                            {fr.percentage.toFixed(0)}%
+                                        </span>
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-1">
+                                        <div
+                                            className="bg-gradient-to-r from-green-500 to-emerald-600 h-2.5 rounded-full transition-all"
+                                            style={{ width: `${fr.percentage}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                                        <span>{formatCurrency(fr.raised)} raised</span>
+                                        <span>Goal: {formatCurrency(fr.goal)}</span>
+                                    </div>
+                                </div>
+                            ))
                         ) : (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                No job posts yet.
+                            <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+                                No active fundraising campaigns
                             </p>
                         )}
                     </div>
-                </div>
-
-                {/* Recent Contacts */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow lg:col-span-2">
-                    <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            Recent Contact Messages
-                        </h3>
-                        <Link
-                            href="/admin/contacts"
-                            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                            View all
-                        </Link>
-                    </div>
-                    <div className="p-6">
-                        {recentActivity.contacts.length > 0 ? (
-                            <div className="space-y-4">
-                                {recentActivity.contacts.map((item) => (
-                                    <div key={item.id} className="flex items-start space-x-3 py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                                        <div className="flex-shrink-0">
-                                            <div className="h-10 w-10 rounded-full bg-red-500 bg-opacity-10 flex items-center justify-center">
-                                                <svg
-                                                    className="h-5 w-5 text-red-600"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                    />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between">
-                                                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {item.name}
-                                                </p>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                    {formatDate(item.created_at)}
-                                                </p>
-                                            </div>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                                {item.email}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                No contact messages yet.
-                            </p>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Quick Actions
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <Link
-                        href="/admin/news/create"
-                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg p-4 text-center transition-colors"
-                    >
-                        <svg className="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span className="text-sm font-medium">Add News</span>
-                    </Link>
-                    <Link
-                        href="/admin/job-posts/create"
-                        className="bg-green-600 hover:bg-green-700 text-white rounded-lg p-4 text-center transition-colors"
-                    >
-                        <svg className="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span className="text-sm font-medium">Add Job</span>
-                    </Link>
-                    <Link
-                        href="/admin/departments/create"
-                        className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg p-4 text-center transition-colors"
-                    >
-                        <svg className="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span className="text-sm font-medium">Add Department</span>
-                    </Link>
-                    <Link
-                        href="/admin/graduates/create"
-                        className="bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg p-4 text-center transition-colors"
-                    >
-                        <svg className="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span className="text-sm font-medium">Add Graduate</span>
-                    </Link>
                 </div>
             </div>
         </AdminLayout>

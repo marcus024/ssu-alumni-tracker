@@ -1,13 +1,16 @@
-import { Graduate } from '@/types';
+import { Graduate, Department } from '@/types';
 import { useState } from 'react';
+import GraduateRegistrationModal from './GraduateRegistrationModal';
 
 interface GraduatesSectionProps {
     graduates: Graduate[];
+    departments: Department[];
 }
 
-export default function GraduatesSection({ graduates }: GraduatesSectionProps) {
+export default function GraduatesSection({ graduates, departments }: GraduatesSectionProps) {
     const [showAll, setShowAll] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [showRegistrationModal, setShowRegistrationModal] = useState(false);
 
     const filteredGraduates = graduates.filter(
         (grad) =>
@@ -30,6 +33,19 @@ export default function GraduatesSection({ graduates }: GraduatesSectionProps) {
                     <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
                         Celebrating the success of our alumni across various industries
                     </p>
+
+                    {/* Register Button */}
+                    <div className="mb-8">
+                        <button
+                            onClick={() => setShowRegistrationModal(true)}
+                            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all shadow-lg"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            Register as Graduate
+                        </button>
+                    </div>
 
                     {/* Search Bar */}
                     <div className="max-w-md mx-auto">
@@ -151,6 +167,12 @@ export default function GraduatesSection({ graduates }: GraduatesSectionProps) {
                     </div>
                 )}
             </div>
+
+            <GraduateRegistrationModal
+                show={showRegistrationModal}
+                onClose={() => setShowRegistrationModal(false)}
+                departments={departments}
+            />
         </section>
     );
 }

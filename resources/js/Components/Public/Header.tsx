@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { PageProps } from '@/types';
 
 interface HeaderProps {
     isDark: boolean;
@@ -7,6 +8,7 @@ interface HeaderProps {
 }
 
 export default function Header({ isDark, toggleTheme }: HeaderProps) {
+    const { siteSettings } = usePage<PageProps>().props;
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -48,12 +50,22 @@ export default function Header({ isDark, toggleTheme }: HeaderProps) {
             <nav className="container mx-auto px-4 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                            SSU
-                        </div>
-                        <span className={`text-xl font-bold ${isScrolled || isDark ? 'text-gray-900 dark:text-white' : 'text-white'}`}>
-                            Alumni Tracker
-                        </span>
+                        {siteSettings?.logo ? (
+                            <img
+                                src={`/storage/${siteSettings.logo}`}
+                                alt="Logo"
+                                className="h-10 w-auto object-contain"
+                            />
+                        ) : (
+                            <>
+                                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                                    SSU
+                                </div>
+                                <span className={`text-xl font-bold ${isScrolled || isDark ? 'text-gray-900 dark:text-white' : 'text-white'}`}>
+                                    Alumni Tracker
+                                </span>
+                            </>
+                        )}
                     </div>
 
                     {/* Desktop Navigation */}
@@ -85,7 +97,7 @@ export default function Header({ isDark, toggleTheme }: HeaderProps) {
                             href="/login"
                             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
-                            Admin Login
+                            LOGIN
                         </Link>
                     </div>
 
@@ -122,7 +134,7 @@ export default function Header({ isDark, toggleTheme }: HeaderProps) {
                             href="/login"
                             className="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
-                            Admin Login
+                            LOGIN
                         </Link>
                     </div>
                 )}

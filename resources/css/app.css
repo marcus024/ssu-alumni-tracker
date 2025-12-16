@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom styles for hero section background */
+@layer utilities {
+    .bg-hero-pattern {
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* Smooth fade-in animation */
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 1s ease-out;
+    }
+}

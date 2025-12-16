@@ -1,9 +1,11 @@
 import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { PageProps, News, JobPost, Department, Graduate, GalleryImage, SchoolInfo } from '@/types';
+import { PageProps, News, JobPost, Department, Graduate, GalleryImage, SchoolInfo, Event, FundRaising } from '@/types';
 import Header from '@/Components/Public/Header';
 import HomeSection from '@/Components/Public/HomeSection';
 import AboutSection from '@/Components/Public/AboutSection';
+import EventsSection from '@/Components/Public/EventsSection';
+import FundRaisingSection from '@/Components/Public/FundRaisingSection';
 import JobBoardSection from '@/Components/Public/JobBoardSection';
 import DepartmentsSection from '@/Components/Public/DepartmentsSection';
 import GraduatesSection from '@/Components/Public/GraduatesSection';
@@ -18,6 +20,8 @@ interface HomeProps extends PageProps {
     graduates: Graduate[];
     galleryImages: GalleryImage[];
     schoolInfo: SchoolInfo | null;
+    events: Event[];
+    fundraisings: FundRaising[];
 }
 
 export default function Home({
@@ -27,6 +31,8 @@ export default function Home({
     graduates,
     galleryImages,
     schoolInfo,
+    events,
+    fundraisings,
 }: HomeProps) {
     const [isDark, setIsDark] = useState(false);
 
@@ -57,17 +63,19 @@ export default function Home({
 
     return (
         <>
-            <Head title="Welcome to SSU Alumni Tracker" />
+            <Head title="SSU Alumni Tracker" />
 
             <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
                 <Header isDark={isDark} toggleTheme={toggleTheme} />
 
                 <main>
-                    <HomeSection news={news} jobPosts={jobPosts} />
+                    <HomeSection news={news} jobPosts={jobPosts} schoolInfo={schoolInfo} />
                     <AboutSection schoolInfo={schoolInfo} />
+                    <EventsSection events={events} />
+                    <FundRaisingSection fundraisings={fundraisings} />
                     <JobBoardSection jobPosts={jobPosts} />
                     <DepartmentsSection departments={departments} />
-                    <GraduatesSection graduates={graduates} />
+                    <GraduatesSection graduates={graduates} departments={departments} />
                     <GallerySection images={galleryImages} />
                     <ContactSection />
                 </main>

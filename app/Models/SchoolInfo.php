@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SchoolInfo extends Model
 {
-    protected $table = 'school_info';
+    protected $table = 'school_infos';
 
     protected $fillable = [
         'total_teachers',
@@ -16,5 +16,6 @@ class SchoolInfo extends Model
         'mission',
         'vision',
         'logo',
+        'hero_image',
     ];
 }

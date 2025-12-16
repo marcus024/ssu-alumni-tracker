@@ -1,5 +1,7 @@
 import { JobPost } from '@/types';
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
+import JobApplicationModal from './JobApplicationModal';
 
 interface JobBoardSectionProps {
     jobPosts: JobPost[];
@@ -7,6 +9,18 @@ interface JobBoardSectionProps {
 
 export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
     const displayedJobs = jobPosts.slice(0, 6);
+    const [selectedJob, setSelectedJob] = useState<JobPost | null>(null);
+    const [showApplicationModal, setShowApplicationModal] = useState(false);
+
+    const openApplicationModal = (job: JobPost) => {
+        setSelectedJob(job);
+        setShowApplicationModal(true);
+    };
+
+    const closeApplicationModal = () => {
+        setShowApplicationModal(false);
+        setSelectedJob(null);
+    };
 
     return (
         <section id="job-board" className="py-20 bg-white dark:bg-gray-900">
@@ -48,8 +62,8 @@ export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
                                         {job.description}
                                     </p>
 
-                                    <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                    <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                                             <span className="mr-2">📍</span>
                                             <span>{job.location}</span>
                                         </div>
@@ -61,6 +75,12 @@ export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
                                                 {job.requirements}
                                             </p>
                                         </details>
+                                        <button
+                                            onClick={() => openApplicationModal(job)}
+                                            className="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+                                        >
+                                            Apply Now
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -87,6 +107,15 @@ export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
                             No job postings available at the moment. Check back soon!
                         </p>
                     </div>
+                )}
+
+                {/* Job Application Modal */}
+                {selectedJob && (
+                    <JobApplicationModal
+                        show={showApplicationModal}
+                        onClose={closeApplicationModal}
+                        jobPost={selectedJob}
+                    />
                 )}
             </div>
         </section>
