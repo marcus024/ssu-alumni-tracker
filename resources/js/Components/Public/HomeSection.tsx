@@ -1,5 +1,6 @@
 import { News, JobPost, SchoolInfo } from '@/types';
 import { motion } from 'framer-motion';
+import { Link } from '@inertiajs/react';
 
 interface HomeSectionProps {
     news: News[];
@@ -75,27 +76,36 @@ export default function HomeSection({ news, jobPosts, schoolInfo }: HomeSectionP
                         <div className="space-y-4">
                             {news.length > 0 ? (
                                 news.slice(0, 3).map((item, index) => (
-                                    <motion.div
-                                        key={item.id}
-                                        className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-                                        whileHover={{ x: 5 }}
-                                    >
-                                        {item.image && (
-                                            <img
-                                                src={`/uploads/${item.image}`}
-                                                alt={item.title}
-                                                className="w-full h-32 object-cover rounded-lg mb-3"
-                                            />
-                                        )}
-                                        <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                                        <p className="text-white/80 text-sm line-clamp-2">{item.content}</p>
-                                        <p className="text-white/60 text-xs mt-2">
-                                            {new Date(item.created_at).toLocaleDateString()}
-                                        </p>
-                                    </motion.div>
+                                    <Link key={item.id} href={`/news/${item.id}`}>
+                                        <motion.div
+                                            className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors cursor-pointer"
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
+                                            whileHover={{ x: 5 }}
+                                        >
+                                            {item.image && (
+                                                <img
+                                                    src={`/uploads/${item.image}`}
+                                                    alt={item.title}
+                                                    className="w-full h-32 object-cover rounded-lg mb-3"
+                                                />
+                                            )}
+                                            <h3 className="text-lg font-semibold text-white mb-2 hover:text-blue-300 transition-colors">{item.title}</h3>
+                                            <p className="text-white/80 text-sm line-clamp-2">{item.content}</p>
+                                            <div className="flex items-center justify-between mt-2">
+                                                <p className="text-white/60 text-xs">
+                                                    {new Date(item.created_at).toLocaleDateString()}
+                                                </p>
+                                                <span className="text-blue-300 text-xs font-semibold flex items-center">
+                                                    Read More
+                                                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </motion.div>
+                                    </Link>
                                 ))
                             ) : (
                                 <p className="text-white/70 text-center py-8">No news available yet</p>

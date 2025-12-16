@@ -1,12 +1,13 @@
 import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { PageProps, News, JobPost, Department, Graduate, GalleryImage, SchoolInfo, Event, FundRaising } from '@/types';
+import { PageProps, News, JobPost, Department, Graduate, GalleryImage, SchoolInfo, Event, FundRaising, Post } from '@/types';
 import Header from '@/Components/Public/Header';
 import HomeSection from '@/Components/Public/HomeSection';
 import AboutSection from '@/Components/Public/AboutSection';
 import EventsSection from '@/Components/Public/EventsSection';
 import FundRaisingSection from '@/Components/Public/FundRaisingSection';
 import JobBoardSection from '@/Components/Public/JobBoardSection';
+import PostsSection from '@/Components/Public/PostsSection';
 import DepartmentsSection from '@/Components/Public/DepartmentsSection';
 import GraduatesSection from '@/Components/Public/GraduatesSection';
 import GallerySection from '@/Components/Public/GallerySection';
@@ -22,6 +23,7 @@ interface HomeProps extends PageProps {
     schoolInfo: SchoolInfo | null;
     events: Event[];
     fundraisings: FundRaising[];
+    posts: Post[];
 }
 
 export default function Home({
@@ -33,6 +35,7 @@ export default function Home({
     schoolInfo,
     events,
     fundraisings,
+    posts,
 }: HomeProps) {
     const [isDark, setIsDark] = useState(false);
 
@@ -74,6 +77,7 @@ export default function Home({
                     <EventsSection events={events} />
                     <FundRaisingSection fundraisings={fundraisings} />
                     <JobBoardSection jobPosts={jobPosts} />
+                    <PostsSection posts={posts} />
                     <DepartmentsSection departments={departments} />
                     <GraduatesSection graduates={graduates} departments={departments} />
                     <GallerySection images={galleryImages} />

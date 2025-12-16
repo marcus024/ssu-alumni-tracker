@@ -26,6 +26,7 @@ Route::get('/', function () {
         'schoolInfo' => SchoolInfo::first(),
         'events' => Event::where('is_active', true)->orderBy('event_date', 'asc')->get(),
         'fundraisings' => FundRaising::where('is_active', true)->latest()->get(),
+        'posts' => Post::with('user')->where('is_published', true)->latest()->get(),
     ]);
 });
 
@@ -54,6 +55,30 @@ Route::get('/departments/{department}', function (Department $department) {
         'schoolInfo' => SchoolInfo::first(),
     ]);
 })->name('departments.show');
+
+// Public Event Details
+Route::get('/events/{event}', function (Event $event) {
+    return Inertia::render('EventDetail', [
+        'event' => $event,
+        'schoolInfo' => SchoolInfo::first(),
+    ]);
+})->name('events.show');
+
+// Public News Details
+Route::get('/news/{news}', function (News $news) {
+    return Inertia::render('NewsDetail', [
+        'news' => $news,
+        'schoolInfo' => SchoolInfo::first(),
+    ]);
+})->name('news.show');
+
+// Public Post Details
+Route::get('/posts/{post}', function (Post $post) {
+    return Inertia::render('PostDetail', [
+        'post' => $post->load('user'),
+        'schoolInfo' => SchoolInfo::first(),
+    ]);
+})->name('posts.show');
 
 // Redirect /dashboard based on user role
 Route::get('/dashboard', function () {

@@ -1,5 +1,6 @@
 import { Event } from '@/types';
 import { motion } from 'framer-motion';
+import { Link } from '@inertiajs/react';
 
 interface EventsSectionProps {
     events: Event[];
@@ -43,26 +44,30 @@ export default function EventsSection({ events }: EventsSectionProps) {
                                     transition={{ duration: 0.5, delay: index * 0.1 }}
                                     whileHover={{ scale: 1.05, y: -10 }}
                                 >
-                                    {event.image && (
-                                        <img
-                                            src={`/uploads/${event.image}`}
-                                            alt={event.title}
-                                            className="w-full h-48 object-cover"
-                                        />
-                                    )}
+                                    <Link href={`/events/${event.id}`}>
+                                        {event.image && (
+                                            <img
+                                                src={`/uploads/${event.image}`}
+                                                alt={event.title}
+                                                className="w-full h-48 object-cover"
+                                            />
+                                        )}
+                                    </Link>
                                     <div className="p-6">
                                         <div className="flex items-center gap-2 mb-3">
                                             <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
                                                 Featured
                                             </span>
                                         </div>
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                            {event.title}
-                                        </h3>
+                                        <Link href={`/events/${event.id}`}>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                                {event.title}
+                                            </h3>
+                                        </Link>
                                         <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                                             {event.description}
                                         </p>
-                                        <div className="space-y-2 text-sm">
+                                        <div className="space-y-2 text-sm mb-4">
                                             <div className="flex items-center text-gray-600 dark:text-gray-400">
                                                 <span className="mr-2">📅</span>
                                                 <span>{new Date(event.event_date).toLocaleDateString('en-US', {
@@ -81,6 +86,15 @@ export default function EventsSection({ events }: EventsSectionProps) {
                                                 </div>
                                             )}
                                         </div>
+                                        <Link
+                                            href={`/events/${event.id}`}
+                                            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold transition-colors"
+                                        >
+                                            Read More
+                                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </Link>
                                     </div>
                                 </motion.div>
                             ))}
@@ -98,21 +112,25 @@ export default function EventsSection({ events }: EventsSectionProps) {
                                     key={event.id}
                                     className="bg-white dark:bg-gray-700 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300"
                                 >
-                                    {event.image && (
-                                        <img
-                                            src={`/uploads/${event.image}`}
-                                            alt={event.title}
-                                            className="w-full h-48 object-cover"
-                                        />
-                                    )}
+                                    <Link href={`/events/${event.id}`}>
+                                        {event.image && (
+                                            <img
+                                                src={`/uploads/${event.image}`}
+                                                alt={event.title}
+                                                className="w-full h-48 object-cover"
+                                            />
+                                        )}
+                                    </Link>
                                     <div className="p-6">
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                            {event.title}
-                                        </h3>
+                                        <Link href={`/events/${event.id}`}>
+                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                                {event.title}
+                                            </h3>
+                                        </Link>
                                         <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                                             {event.description}
                                         </p>
-                                        <div className="space-y-2 text-sm">
+                                        <div className="space-y-2 text-sm mb-4">
                                             <div className="flex items-center text-gray-600 dark:text-gray-400">
                                                 <span className="mr-2">📅</span>
                                                 <span>{new Date(event.event_date).toLocaleDateString('en-US', {
@@ -130,6 +148,15 @@ export default function EventsSection({ events }: EventsSectionProps) {
                                                 </div>
                                             )}
                                         </div>
+                                        <Link
+                                            href={`/events/${event.id}`}
+                                            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold transition-colors"
+                                        >
+                                            Read More
+                                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </Link>
                                     </div>
                                 </div>
                             ))}
