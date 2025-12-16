@@ -21,7 +21,7 @@ class DonationController extends Controller
         ]);
 
         // Store receipt file
-        $receiptPath = $request->file('receipt')->store('donations/receipts', 'public');
+        $receiptPath = $request->file('receipt')->store('donations/receipts', 'uploads');
 
         // Create donation
         Donation::create([

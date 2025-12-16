@@ -44,7 +44,7 @@ class DepartmentController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            $validated['logo'] = $request->file('logo')->store('departments', 'public');
+            $validated['logo'] = $request->file('logo')->store('departments', 'uploads');
         }
 
         Department::create($validated);
@@ -88,9 +88,9 @@ class DepartmentController extends Controller
 
         if ($request->hasFile('logo')) {
             if ($department->logo) {
-                Storage::disk('public')->delete($department->logo);
+                Storage::disk('uploads')->delete($department->logo);
             }
-            $validated['logo'] = $request->file('logo')->store('departments', 'public');
+            $validated['logo'] = $request->file('logo')->store('departments', 'uploads');
         }
 
         $department->update($validated);
@@ -105,7 +105,7 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         if ($department->logo) {
-            Storage::disk('public')->delete($department->logo);
+            Storage::disk('uploads')->delete($department->logo);
         }
 
         $department->delete();

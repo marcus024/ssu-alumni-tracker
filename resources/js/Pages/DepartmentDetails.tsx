@@ -76,7 +76,7 @@ export default function DepartmentDetails({ department, schoolInfo }: Department
                             >
                                 {department.logo ? (
                                     <img
-                                        src={`/storage/${department.logo}`}
+                                        src={`/uploads/${department.logo}`}
                                         alt={department.name}
                                         className="w-64 h-64 object-contain bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
                                     />

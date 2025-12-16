@@ -27,7 +27,7 @@ class GalleryController extends Controller
             'image' => 'required|image|max:5120',
         ]);
 
-        $validated['image'] = $request->file('image')->store('gallery', 'public');
+        $validated['image'] = $request->file('image')->store('gallery', 'uploads');
 
         GalleryImage::create($validated);
 
@@ -38,7 +38,7 @@ class GalleryController extends Controller
     public function destroy(GalleryImage $gallery)
     {
         if ($gallery->image) {
-            Storage::disk('public')->delete($gallery->image);
+            Storage::disk('uploads')->delete($gallery->image);
         }
 
         $gallery->delete();

@@ -59,7 +59,7 @@ export default function Edit({ news }: { news: News }) {
                             {news.image && (
                                 <div className="mt-2 mb-3">
                                     <img
-                                        src={`/storage/${news.image}`}
+                                        src={`/uploads/${news.image}`}
                                         alt={news.title}
                                         className="h-32 w-auto rounded-lg object-cover"
                                     />

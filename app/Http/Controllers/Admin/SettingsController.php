@@ -41,17 +41,17 @@ class SettingsController extends Controller
         // Handle logo upload
         if ($request->hasFile('logo')) {
             if ($schoolInfo->logo) {
-                Storage::disk('public')->delete($schoolInfo->logo);
+                Storage::disk('uploads')->delete($schoolInfo->logo);
             }
-            $validated['logo'] = $request->file('logo')->store('school', 'public');
+            $validated['logo'] = $request->file('logo')->store('school', 'uploads');
         }
 
         // Handle hero image upload
         if ($request->hasFile('hero_image')) {
             if ($schoolInfo->hero_image) {
-                Storage::disk('public')->delete($schoolInfo->hero_image);
+                Storage::disk('uploads')->delete($schoolInfo->hero_image);
             }
-            $validated['hero_image'] = $request->file('hero_image')->store('hero', 'public');
+            $validated['hero_image'] = $request->file('hero_image')->store('hero', 'uploads');
         }
 
         $schoolInfo->fill($validated);

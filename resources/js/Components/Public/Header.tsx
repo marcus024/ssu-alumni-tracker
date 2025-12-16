@@ -52,7 +52,7 @@ export default function Header({ isDark, toggleTheme }: HeaderProps) {
                     <div className="flex items-center space-x-2">
                         {siteSettings?.logo ? (
                             <img
-                                src={`/storage/${siteSettings.logo}`}
+                                src={`/uploads/${siteSettings.logo}`}
                                 alt="Logo"
                                 className="h-10 w-auto object-contain"
                             />

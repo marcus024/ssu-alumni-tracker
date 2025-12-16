@@ -9,7 +9,7 @@ interface HomeSectionProps {
 
 export default function HomeSection({ news, jobPosts, schoolInfo }: HomeSectionProps) {
     const heroImage = schoolInfo?.hero_image
-        ? `/storage/${schoolInfo.hero_image}`
+        ? `/uploads/${schoolInfo.hero_image}`
         : '/images/hero-bg.jpg';
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -85,7 +85,7 @@ export default function HomeSection({ news, jobPosts, schoolInfo }: HomeSectionP
                                     >
                                         {item.image && (
                                             <img
-                                                src={`/storage/${item.image}`}
+                                                src={`/uploads/${item.image}`}
                                                 alt={item.title}
                                                 className="w-full h-32 object-cover rounded-lg mb-3"
                                             />

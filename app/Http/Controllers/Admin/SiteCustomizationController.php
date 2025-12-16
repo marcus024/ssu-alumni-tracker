@@ -48,9 +48,9 @@ class SiteCustomizationController extends Controller
         if ($request->hasFile('logo')) {
             // Delete old logo
             if ($settings->logo) {
-                Storage::disk('public')->delete($settings->logo);
+                Storage::disk('uploads')->delete($settings->logo);
             }
-            $validated['logo'] = $request->file('logo')->store('site-settings', 'public');
+            $validated['logo'] = $request->file('logo')->store('site-settings', 'uploads');
         }
 
         $settings->fill($validated);

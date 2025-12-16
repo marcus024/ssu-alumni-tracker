@@ -62,7 +62,7 @@ export default function Index({ auth, images }: GalleryIndexProps) {
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {images.map((img) => (
                                 <div key={img.id} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
-                                    <img src={`/storage/${img.image}`} alt={img.title} className="w-full h-full object-cover" />
+                                    <img src={`/uploads/${img.image}`} alt={img.title} className="w-full h-full object-cover" />
                                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                                         <h3 className="text-white font-bold truncate">{img.title}</h3>
                                         {img.description && <p className="text-white/80 text-sm truncate">{img.description}</p>}

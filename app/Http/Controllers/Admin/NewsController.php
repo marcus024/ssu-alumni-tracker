@@ -44,7 +44,7 @@ class NewsController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('news', 'public');
+            $validated['image'] = $request->file('image')->store('news', 'uploads');
         }
 
         News::create($validated);
@@ -70,9 +70,9 @@ class NewsController extends Controller
 
         if ($request->hasFile('image')) {
             if ($news->image) {
-                Storage::disk('public')->delete($news->image);
+                Storage::disk('uploads')->delete($news->image);
             }
-            $validated['image'] = $request->file('image')->store('news', 'public');
+            $validated['image'] = $request->file('image')->store('news', 'uploads');
         }
 
         $news->update($validated);
@@ -84,7 +84,7 @@ class NewsController extends Controller
     public function destroy(News $news): RedirectResponse
     {
         if ($news->image) {
-            Storage::disk('public')->delete($news->image);
+            Storage::disk('uploads')->delete($news->image);
         }
 
         $news->delete();

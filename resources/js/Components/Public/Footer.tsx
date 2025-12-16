@@ -13,7 +13,7 @@ export default function Footer() {
                     <div>
                         {siteSettings?.logo ? (
                             <img
-                                src={`/storage/${siteSettings.logo}`}
+                                src={`/uploads/${siteSettings.logo}`}
                                 alt="Logo"
                                 className="h-10 w-auto object-contain mb-4"
                             />

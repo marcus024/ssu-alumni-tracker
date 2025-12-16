@@ -116,7 +116,7 @@ export default function Dashboard({
                                     <div key={news.id} className="flex items-start space-x-3 pb-4 border-b border-gray-200 dark:border-gray-700 last:border-0">
                                         {news.image && (
                                             <img
-                                                src={`/storage/${news.image}`}
+                                                src={`/uploads/${news.image}`}
                                                 alt={news.title}
                                                 className="w-16 h-16 object-cover rounded"
                                             />

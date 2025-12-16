@@ -106,7 +106,7 @@ export default function Edit({ department }: EditProps) {
                                     {department.logo && (
                                         <div className="mb-2">
                                             <img
-                                                src={`/storage/${department.logo}`}
+                                                src={`/uploads/${department.logo}`}
                                                 alt={department.name}
                                                 className="w-32 h-32 object-contain"
                                             />

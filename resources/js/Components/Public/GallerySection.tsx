@@ -30,7 +30,7 @@ export default function GallerySection({ images }: GallerySectionProps) {
                                     className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer aspect-square"
                                 >
                                     <img
-                                        src={`/storage/${image.image}`}
+                                        src={`/uploads/${image.image}`}
                                         alt={image.description}
                                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
                                     />
@@ -75,7 +75,7 @@ export default function GallerySection({ images }: GallerySectionProps) {
                             </svg>
                         </button>
                         <img
-                            src={`/storage/${selectedImage.image}`}
+                            src={`/uploads/${selectedImage.image}`}
                             alt={selectedImage.description}
                             className="max-w-full max-h-[80vh] object-contain rounded-lg"
                         />

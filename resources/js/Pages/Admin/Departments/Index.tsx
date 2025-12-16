@@ -56,7 +56,7 @@ export default function Index({ auth, departments }: DepartmentsIndexProps) {
                                     >
                                         {department.logo && (
                                             <img
-                                                src={`/storage/${department.logo}`}
+                                                src={`/uploads/${department.logo}`}
                                                 alt={department.name}
                                                 className="w-20 h-20 object-contain mx-auto mb-4"
                                             />

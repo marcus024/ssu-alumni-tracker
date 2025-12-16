@@ -63,7 +63,7 @@ export default function DepartmentsSection({ departments }: DepartmentsSectionPr
                                     <div className="md:col-span-1 flex flex-col items-center">
                                         {departments[activeTab].logo ? (
                                             <img
-                                                src={`/storage/${departments[activeTab].logo}`}
+                                                src={`/uploads/${departments[activeTab].logo}`}
                                                 alt={departments[activeTab].name}
                                                 className="w-48 h-48 object-contain rounded-lg mb-4"
                                             />

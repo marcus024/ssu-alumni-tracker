@@ -103,7 +103,7 @@ export default function Edit({ event }: { event: Event }) {
                             {event.image && (
                                 <div className="mt-2 mb-3">
                                     <img
-                                        src={`/storage/${event.image}`}
+                                        src={`/uploads/${event.image}`}
                                         alt={event.title}
                                         className="h-32 w-auto rounded-lg object-cover"
                                     />

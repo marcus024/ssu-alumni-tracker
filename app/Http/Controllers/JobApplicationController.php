@@ -21,7 +21,7 @@ class JobApplicationController extends Controller
         ]);
 
         // Store resume file
-        $resumePath = $request->file('resume')->store('job-applications/resumes', 'public');
+        $resumePath = $request->file('resume')->store('job-applications/resumes', 'uploads');
 
         // Create application
         JobApplication::create([

@@ -49,7 +49,7 @@ class PostController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('posts', 'public');
+            $validated['image'] = $request->file('image')->store('posts', 'uploads');
         }
 
         $validated['user_id'] = auth()->id();
@@ -80,9 +80,9 @@ class PostController extends Controller
 
         if ($request->hasFile('image')) {
             if ($post->image) {
-                Storage::disk('public')->delete($post->image);
+                Storage::disk('uploads')->delete($post->image);
             }
-            $validated['image'] = $request->file('image')->store('posts', 'public');
+            $validated['image'] = $request->file('image')->store('posts', 'uploads');
         }
 
         $post->update($validated);
@@ -94,7 +94,7 @@ class PostController extends Controller
     public function destroy(Post $post): RedirectResponse
     {
         if ($post->image) {
-            Storage::disk('public')->delete($post->image);
+            Storage::disk('uploads')->delete($post->image);
         }
 
         $post->delete();

@@ -59,7 +59,7 @@ export default function FundRaisingSection({ fundraisings }: FundRaisingSectionP
                                     {fundraising.image && (
                                         <div className="relative">
                                             <img
-                                                src={`/storage/${fundraising.image}`}
+                                                src={`/uploads/${fundraising.image}`}
                                                 alt={fundraising.title}
                                                 className="w-full h-56 object-cover"
                                             />

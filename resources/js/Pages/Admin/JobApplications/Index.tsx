@@ -150,7 +150,7 @@ export default function Index({ applications, filters = {} }: JobApplicationsInd
                                         </Link>
                                         {application.resume_path && (
                                             <a
-                                                href={`/storage/${application.resume_path}`}
+                                                href={`/uploads/${application.resume_path}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="ml-3 text-green-600 hover:text-green-900 dark:text-green-400"

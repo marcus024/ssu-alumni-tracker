@@ -60,7 +60,7 @@ export default function Edit({ post }: { post: Post }) {
                             {post.image && (
                                 <div className="mt-2 mb-3">
                                     <img
-                                        src={`/storage/${post.image}`}
+                                        src={`/uploads/${post.image}`}
                                         alt={post.title}
                                         className="h-32 w-auto rounded-lg object-cover"
                                     />

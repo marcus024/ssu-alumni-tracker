@@ -59,7 +59,7 @@ class EventController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('events', 'public');
+            $validated['image'] = $request->file('image')->store('events', 'uploads');
         }
 
         Event::create($validated);
@@ -96,9 +96,9 @@ class EventController extends Controller
 
         if ($request->hasFile('image')) {
             if ($event->image) {
-                Storage::disk('public')->delete($event->image);
+                Storage::disk('uploads')->delete($event->image);
             }
-            $validated['image'] = $request->file('image')->store('events', 'public');
+            $validated['image'] = $request->file('image')->store('events', 'uploads');
         }
 
         $event->update($validated);
@@ -113,7 +113,7 @@ class EventController extends Controller
     public function destroy(Event $event): RedirectResponse
     {
         if ($event->image) {
-            Storage::disk('public')->delete($event->image);
+            Storage::disk('uploads')->delete($event->image);
         }
 
         $event->delete();

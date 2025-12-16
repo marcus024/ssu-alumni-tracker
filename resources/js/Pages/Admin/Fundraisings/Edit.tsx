@@ -157,7 +157,7 @@ export default function Edit({ fundraising }: { fundraising: FundRaising }) {
                             {fundraising.image && (
                                 <div className="mt-2 mb-3">
                                     <img
-                                        src={`/storage/${fundraising.image}`}
+                                        src={`/uploads/${fundraising.image}`}
                                         alt={fundraising.title}
                                         className="h-32 w-auto rounded-lg object-cover"
                                     />

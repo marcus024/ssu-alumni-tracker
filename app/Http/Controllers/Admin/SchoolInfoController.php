@@ -34,7 +34,7 @@ class SchoolInfoController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            $validated['logo'] = $request->file('logo')->store('school', 'public');
+            $validated['logo'] = $request->file('logo')->store('school', 'uploads');
         }
 
         SchoolInfo::create($validated);
@@ -57,9 +57,9 @@ class SchoolInfoController extends Controller
 
         if ($request->hasFile('logo')) {
             if ($schoolInfo->logo) {
-                Storage::disk('public')->delete($schoolInfo->logo);
+                Storage::disk('uploads')->delete($schoolInfo->logo);
             }
-            $validated['logo'] = $request->file('logo')->store('school', 'public');
+            $validated['logo'] = $request->file('logo')->store('school', 'uploads');
         }
 
         $schoolInfo->update($validated);

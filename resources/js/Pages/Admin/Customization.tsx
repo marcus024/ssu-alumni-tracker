@@ -59,7 +59,7 @@ export default function Customization({ settings }: CustomizationProps) {
                                 <div className="mb-4">
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Current Logo:</p>
                                     <img
-                                        src={`/storage/${settings.logo}`}
+                                        src={`/uploads/${settings.logo}`}
                                         alt="Current Logo"
                                         className="h-16 object-contain bg-gray-100 dark:bg-gray-700 p-2 rounded"
                                     />

@@ -93,7 +93,7 @@ export default function Index({ fundraisings, filters }: FundraisingsIndexProps)
                         <div key={campaign.id} className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
                             {campaign.image && (
                                 <img
-                                    src={`/storage/${campaign.image}`}
+                                    src={`/uploads/${campaign.image}`}
                                     alt={campaign.title}
                                     className="w-full h-48 object-cover"
                                 />

@@ -37,7 +37,7 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
                             <div className="flex flex-col items-center justify-center">
                                 {schoolInfo.logo ? (
                                     <img
-                                        src={`/storage/${schoolInfo.logo}`}
+                                        src={`/uploads/${schoolInfo.logo}`}
                                         alt="SSU Logo"
                                         className="w-64 h-64 object-contain mb-6"
                                     />

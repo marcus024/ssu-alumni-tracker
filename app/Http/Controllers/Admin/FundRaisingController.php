@@ -51,7 +51,7 @@ class FundRaisingController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('fundraisings', 'public');
+            $validated['image'] = $request->file('image')->store('fundraisings', 'uploads');
         }
 
         FundRaising::create($validated);
@@ -84,9 +84,9 @@ class FundRaisingController extends Controller
 
         if ($request->hasFile('image')) {
             if ($fundraising->image) {
-                Storage::disk('public')->delete($fundraising->image);
+                Storage::disk('uploads')->delete($fundraising->image);
             }
-            $validated['image'] = $request->file('image')->store('fundraisings', 'public');
+            $validated['image'] = $request->file('image')->store('fundraisings', 'uploads');
         }
 
         $fundraising->update($validated);
@@ -98,7 +98,7 @@ class FundRaisingController extends Controller
     public function destroy(FundRaising $fundraising): RedirectResponse
     {
         if ($fundraising->image) {
-            Storage::disk('public')->delete($fundraising->image);
+            Storage::disk('uploads')->delete($fundraising->image);
         }
 
         $fundraising->delete();

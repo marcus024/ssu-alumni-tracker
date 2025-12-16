@@ -121,7 +121,7 @@ export default function Index({ posts, filters }: PostsIndexProps) {
                                             <div className="flex items-center">
                                                 {item.image && (
                                                     <img
-                                                        src={`/storage/${item.image}`}
+                                                        src={`/uploads/${item.image}`}
                                                         alt={item.title}
                                                         className="h-10 w-10 rounded object-cover mr-3"
                                                     />

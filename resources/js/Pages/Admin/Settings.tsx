@@ -121,7 +121,7 @@ export default function Settings({ schoolInfo }: { schoolInfo: SchoolInfo | null
                             {schoolInfo?.logo && (
                                 <div className="mt-2 mb-3">
                                     <img
-                                        src={`/storage/${schoolInfo.logo}`}
+                                        src={`/uploads/${schoolInfo.logo}`}
                                         alt="School Logo"
                                         className="h-24 w-auto"
                                     />
@@ -153,7 +153,7 @@ export default function Settings({ schoolInfo }: { schoolInfo: SchoolInfo | null
                             {schoolInfo?.hero_image && (
                                 <div className="mt-2 mb-3">
                                     <img
-                                        src={`/storage/${schoolInfo.hero_image}`}
+                                        src={`/uploads/${schoolInfo.hero_image}`}
                                         alt="Hero Background"
                                         className="h-40 w-full object-cover rounded-lg"
                                     />

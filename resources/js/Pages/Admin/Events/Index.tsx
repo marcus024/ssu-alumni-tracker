@@ -110,7 +110,7 @@ export default function Index({ events, filters }: EventsIndexProps) {
                                             <div className="flex items-center">
                                                 {event.image && (
                                                     <img
-                                                        src={`/storage/${event.image}`}
+                                                        src={`/uploads/${event.image}`}
                                                         alt={event.title}
                                                         className="h-10 w-10 rounded object-cover mr-3"
                                                     />
