@@ -61,7 +61,7 @@ export default function Create() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <InputLabel htmlFor="goal_amount" value="Goal Amount ($)" />
+                                <InputLabel htmlFor="goal_amount" value="Goal Amount (PHP)" />
                                 <TextInput
                                     id="goal_amount"
                                     type="number"
@@ -76,7 +76,7 @@ export default function Create() {
                             </div>
 
                             <div>
-                                <InputLabel htmlFor="current_amount" value="Current Amount ($)" />
+                                <InputLabel htmlFor="current_amount" value="Current Amount (PHP)" />
                                 <TextInput
                                     id="current_amount"
                                     type="number"
