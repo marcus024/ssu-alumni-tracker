@@ -1,14 +1,38 @@
-import { News, JobPost, SchoolInfo } from '@/types';
+import { News, JobPost, SchoolInfo, Graduate } from '@/types';
 import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 interface HomeSectionProps {
     news: News[];
     jobPosts: JobPost[];
     schoolInfo?: SchoolInfo | null;
+    graduates: Graduate[];
 }
 
-export default function HomeSection({ news, jobPosts, schoolInfo }: HomeSectionProps) {
+export default function HomeSection({ news, jobPosts, schoolInfo, graduates }: HomeSectionProps) {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Extract all activity images from graduates
+    const activityImages: string[] = [];
+    graduates.forEach(graduate => {
+        if (graduate.activity_images && Array.isArray(graduate.activity_images)) {
+            graduate.activity_images.forEach(image => {
+                activityImages.push(`/storage/${image}`);
+            });
+        }
+    });
+
+    // Auto-scroll carousel every 5 seconds
+    useEffect(() => {
+        if (activityImages.length > 0) {
+            const interval = setInterval(() => {
+                setCurrentImageIndex((prevIndex) => (prevIndex + 1) % activityImages.length);
+            }, 5000); // Change image every 5 seconds
+
+            return () => clearInterval(interval);
+        }
+    }, [activityImages.length]);
     const heroImage = schoolInfo?.hero_image
         ? `/uploads/${schoolInfo.hero_image}`
         : '/images/hero-bg.jpg';
@@ -56,6 +80,88 @@ export default function HomeSection({ news, jobPosts, schoolInfo }: HomeSectionP
                         Connecting Alumni, Sharing Opportunities, Building Futures
                     </motion.p>
                 </motion.div>
+
+                {/* Alumni Activities Carousel */}
+                {activityImages.length > 0 && (
+                    <motion.div
+                        className="max-w-7xl mx-auto mb-16"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                    >
+                        <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+                            {/* Carousel Images */}
+                            <div className="relative h-96 md:h-[32rem] lg:h-[36rem]">
+                                {activityImages.map((image, index) => (
+                                    <motion.div
+                                        key={index}
+                                        className="absolute inset-0"
+                                        initial={{ opacity: 0 }}
+                                        animate={{
+                                            opacity: index === currentImageIndex ? 1 : 0,
+                                            scale: index === currentImageIndex ? 1 : 1.1,
+                                        }}
+                                        transition={{ duration: 1 }}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`Alumni Activity ${index + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Carousel Caption */}
+                            <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10 text-white">
+                                <motion.h3
+                                    className="text-3xl md:text-4xl font-bold mb-3"
+                                    key={currentImageIndex}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    Alumni Previous Activities
+                                </motion.h3>
+                                <p className="text-white/90 text-lg md:text-xl">Showcasing memorable moments from our alumni community</p>
+                            </div>
+
+                            {/* Carousel Controls */}
+                            <div className="absolute top-1/2 left-6 right-6 flex justify-between items-center -translate-y-1/2">
+                                <button
+                                    onClick={() => setCurrentImageIndex((currentImageIndex - 1 + activityImages.length) % activityImages.length)}
+                                    className="bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full p-4 transition-all hover:scale-110 shadow-lg"
+                                >
+                                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => setCurrentImageIndex((currentImageIndex + 1) % activityImages.length)}
+                                    className="bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full p-4 transition-all hover:scale-110 shadow-lg"
+                                >
+                                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {/* Carousel Indicators */}
+                            <div className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 flex gap-3">
+                                {activityImages.slice(0, 10).map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentImageIndex(index)}
+                                        className={`h-1.5 rounded-full transition-all ${
+                                            index === currentImageIndex % 10 ? 'bg-white w-12' : 'bg-white/50 w-8 hover:bg-white/70'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* News and Job Posts Grid */}
                 <motion.div

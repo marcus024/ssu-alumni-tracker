@@ -17,6 +17,7 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
     const [showSuccess, setShowSuccess] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+    const [activityImagePreviews, setActivityImagePreviews] = useState<string[]>([]);
     const totalSteps = 5;
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -100,6 +101,9 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
 
         // Profile Picture
         profile_picture: null as File | null,
+
+        // Activity Images
+        activity_images: [] as File[],
     });
 
     const handleCheckboxChange = (field: keyof typeof data, value: string) => {
@@ -120,6 +124,34 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleActivityImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length > 0) {
+            const limitedFiles = files.slice(0, 5);
+            const currentFiles = [...data.activity_images, ...limitedFiles].slice(0, 5);
+            setData('activity_images', currentFiles);
+
+            const previews: string[] = [];
+            currentFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    previews.push(reader.result as string);
+                    if (previews.length === currentFiles.length) {
+                        setActivityImagePreviews(previews);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
+    const removeActivityImage = (index: number) => {
+        const newFiles = data.activity_images.filter((_, i) => i !== index);
+        const newPreviews = activityImagePreviews.filter((_, i) => i !== index);
+        setData('activity_images', newFiles);
+        setActivityImagePreviews(newPreviews);
     };
 
     const submit: FormEventHandler = (e) => {
@@ -248,6 +280,53 @@ export default function GraduateRegistrationModal({ show, onClose, departments }
                                         {profilePicturePreview ? 'Change Photo' : 'Upload Photo'}
                                     </label>
                                     <InputError message={errors.profile_picture} className="mt-2" />
+                                </div>
+
+                                {/* Activity Images Upload */}
+                                <div className="flex flex-col space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div className="text-center">
+                                        <label className={labelClass}>Alumni Previous Activity Images *</label>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Upload up to 5 images of your previous activities (Required)</p>
+                                    </div>
+
+                                    {activityImagePreviews.length > 0 && (
+                                        <div className="grid grid-cols-5 gap-2">
+                                            {activityImagePreviews.map((preview, index) => (
+                                                <div key={index} className="relative group">
+                                                    <img
+                                                        src={preview}
+                                                        alt={`Activity ${index + 1}`}
+                                                        className="w-full h-24 object-cover rounded-lg border-2 border-indigo-400"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeActivityImage(index)}
+                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <input
+                                        type="file"
+                                        id="activity_images"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleActivityImagesChange}
+                                        className="hidden"
+                                    />
+                                    <label
+                                        htmlFor="activity_images"
+                                        className="cursor-pointer px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition text-sm text-center"
+                                    >
+                                        {activityImagePreviews.length > 0 ? `Add More Images (${activityImagePreviews.length}/5)` : 'Upload Activity Images'}
+                                    </label>
+                                    <InputError message={errors.activity_images} className="mt-2" />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

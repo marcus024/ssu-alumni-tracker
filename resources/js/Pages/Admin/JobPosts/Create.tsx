@@ -13,6 +13,7 @@ export default function Create() {
         description: '',
         requirements: '',
         location: '',
+        application_url: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -67,6 +68,22 @@ export default function Create() {
                                 />
                                 <InputError message={errors.location} className="mt-2" />
                             </div>
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="application_url" value="Application URL" />
+                            <TextInput
+                                id="application_url"
+                                type="url"
+                                className="mt-1 block w-full dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+                                value={data.application_url}
+                                onChange={(e) => setData('application_url', e.target.value)}
+                                placeholder="https://example.com/apply"
+                            />
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                URL where users will be redirected when they click "Apply Now"
+                            </p>
+                            <InputError message={errors.application_url} className="mt-2" />
                         </div>
 
                         <div>

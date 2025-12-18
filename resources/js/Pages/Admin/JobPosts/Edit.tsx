@@ -14,6 +14,7 @@ export default function Edit({ jobPost }: { jobPost: JobPost }) {
         description: jobPost.description || '',
         requirements: jobPost.requirements || '',
         location: jobPost.location || '',
+        application_url: jobPost.application_url || '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -68,6 +69,22 @@ export default function Edit({ jobPost }: { jobPost: JobPost }) {
                                 />
                                 <InputError message={errors.location} className="mt-2" />
                             </div>
+                        </div>
+
+                        <div>
+                            <InputLabel htmlFor="application_url" value="Application URL" />
+                            <TextInput
+                                id="application_url"
+                                type="url"
+                                className="mt-1 block w-full dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+                                value={data.application_url}
+                                onChange={(e) => setData('application_url', e.target.value)}
+                                placeholder="https://example.com/apply"
+                            />
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                URL where users will be redirected when they click "Apply Now"
+                            </p>
+                            <InputError message={errors.application_url} className="mt-2" />
                         </div>
 
                         <div>

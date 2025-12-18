@@ -12,5 +12,6 @@ class JobPost extends Model
         'description',
         'requirements',
         'location',
+        'application_url',
     ];
 }

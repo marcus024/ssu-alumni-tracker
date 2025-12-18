@@ -72,15 +72,15 @@ export default function Home({
                 <Header isDark={isDark} toggleTheme={toggleTheme} />
 
                 <main>
-                    <HomeSection news={news} jobPosts={jobPosts} schoolInfo={schoolInfo} />
+                    <HomeSection news={news} jobPosts={jobPosts} schoolInfo={schoolInfo} graduates={graduates} />
                     <AboutSection schoolInfo={schoolInfo} />
-                    <EventsSection events={events} />
-                    <FundRaisingSection fundraisings={fundraisings} />
                     <JobBoardSection jobPosts={jobPosts} />
                     <PostsSection posts={posts} />
+                    <EventsSection events={events} />
+                    <FundRaisingSection fundraisings={fundraisings} />
                     <DepartmentsSection departments={departments} />
                     <GraduatesSection graduates={graduates} departments={departments} />
-                    <GallerySection images={galleryImages} />
+                    <GallerySection images={galleryImages} graduates={graduates} />
                     <ContactSection />
                 </main>
 

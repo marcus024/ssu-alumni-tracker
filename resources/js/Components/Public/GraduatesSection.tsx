@@ -79,10 +79,20 @@ export default function GraduatesSection({ graduates, departments }: GraduatesSe
                                 >
                                     {/* Avatar */}
                                     <div className="flex items-center mb-4">
-                                        <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
-                                            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                                {graduate.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2)}
-                                            </span>
+                                        <div className="w-16 h-16 rounded-full mr-4 overflow-hidden border-2 border-blue-500 dark:border-blue-400">
+                                            {graduate.profile_picture ? (
+                                                <img
+                                                    src={`/storage/${graduate.profile_picture}`}
+                                                    alt={graduate.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                                                    <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                                        {graduate.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2)}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                         <div>
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">

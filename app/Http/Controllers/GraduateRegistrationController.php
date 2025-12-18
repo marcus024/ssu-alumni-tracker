@@ -99,6 +99,9 @@ class GraduateRegistrationController extends Controller
 
             // Profile Picture
             'profile_picture' => 'nullable|image|max:2048', // Max 2MB
+
+            // Activity Images
+            'activity_images.*' => 'nullable|image|max:5120', // Max 5MB each
         ]);
 
         // Handle profile picture upload
@@ -108,6 +111,17 @@ class GraduateRegistrationController extends Controller
             $path = $profilePicture->storeAs('profile_pictures', $filename, 'public');
             $validated['profile_picture'] = $path;
         }
+
+        // Handle activity images upload
+        $activityImagePaths = [];
+        if ($request->hasFile('activity_images')) {
+            foreach ($request->file('activity_images') as $index => $image) {
+                $filename = time() . '_activity_' . $index . '_' . $image->getClientOriginalName();
+                $path = $image->storeAs('activity_images', $filename, 'public');
+                $activityImagePaths[] = $path;
+            }
+        }
+        $validated['activity_images'] = $activityImagePaths;
 
         // Compose full name from surname, first_name, and middle_name
         $validated['name'] = trim($validated['surname'] . ', ' . $validated['first_name'] . ' ' . ($validated['middle_name'] ?? ''));

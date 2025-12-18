@@ -16,6 +16,7 @@ class Graduate extends Model
         'department_id',
         'status',
         'profile_picture',
+        'activity_images',
         // Section A: General Information
         'surname',
         'first_name',
@@ -83,6 +84,7 @@ class Graduate extends Model
         'job_change_reasons' => 'array',
         'advance_study_date_graduated' => 'date',
         'exam_license_date' => 'date',
+        'activity_images' => 'array',
     ];
 
     public function department()

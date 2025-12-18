@@ -31,6 +31,7 @@ export interface JobPost {
     description: string;
     requirements: string;
     location: string;
+    application_url?: string;
     created_at: string;
     updated_at: string;
 }
@@ -57,6 +58,8 @@ export interface Graduate {
     department_id: number;
     department?: Department;
     status?: 'pending' | 'approved' | 'rejected';
+    profile_picture?: string;
+    activity_images?: string[];
     created_at: string;
     updated_at: string;
 }

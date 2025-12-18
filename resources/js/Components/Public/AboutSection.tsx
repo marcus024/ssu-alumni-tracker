@@ -121,7 +121,7 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
                                         <span className="text-2xl">🎯</span>
                                     </div>
                                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                        Our Mission
+                                        Mission
                                     </h3>
                                 </div>
                                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -143,7 +143,7 @@ export default function AboutSection({ schoolInfo }: AboutSectionProps) {
                                         <span className="text-2xl">👁️</span>
                                     </div>
                                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                        Our Vision
+                                        Vision
                                     </h3>
                                 </div>
                                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">

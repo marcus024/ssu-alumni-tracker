@@ -23,11 +23,24 @@ class GraduateController extends Controller
             });
         }
 
+        // Department filter
+        if ($request->filled('department')) {
+            $query->where('department_id', $request->department);
+        }
+
         $graduates = $query->latest()->paginate(15);
+
+        // Get all departments with their graduate counts
+        $departments = Department::withCount('graduates')->get();
+
+        // Get total count of graduates
+        $totalGraduates = Graduate::count();
 
         return Inertia::render('Admin/Graduates/Index', [
             'graduates' => $graduates,
-            'filters' => $request->only(['search']),
+            'departments' => $departments,
+            'totalGraduates' => $totalGraduates,
+            'filters' => $request->only(['search', 'department']),
         ]);
     }
 

@@ -1,7 +1,5 @@
 import { JobPost } from '@/types';
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
-import JobApplicationModal from './JobApplicationModal';
 
 interface JobBoardSectionProps {
     jobPosts: JobPost[];
@@ -9,17 +7,13 @@ interface JobBoardSectionProps {
 
 export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
     const displayedJobs = jobPosts.slice(0, 6);
-    const [selectedJob, setSelectedJob] = useState<JobPost | null>(null);
-    const [showApplicationModal, setShowApplicationModal] = useState(false);
 
-    const openApplicationModal = (job: JobPost) => {
-        setSelectedJob(job);
-        setShowApplicationModal(true);
-    };
-
-    const closeApplicationModal = () => {
-        setShowApplicationModal(false);
-        setSelectedJob(null);
+    const handleApplyNow = (job: JobPost) => {
+        if (job.application_url) {
+            window.open(job.application_url, '_blank', 'noopener,noreferrer');
+        } else {
+            alert('Application URL not available for this job posting.');
+        }
     };
 
     return (
@@ -76,7 +70,7 @@ export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
                                             </p>
                                         </details>
                                         <button
-                                            onClick={() => openApplicationModal(job)}
+                                            onClick={() => handleApplyNow(job)}
                                             className="w-full mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
                                         >
                                             Apply Now
@@ -107,15 +101,6 @@ export default function JobBoardSection({ jobPosts }: JobBoardSectionProps) {
                             No job postings available at the moment. Check back soon!
                         </p>
                     </div>
-                )}
-
-                {/* Job Application Modal */}
-                {selectedJob && (
-                    <JobApplicationModal
-                        show={showApplicationModal}
-                        onClose={closeApplicationModal}
-                        jobPost={selectedJob}
-                    />
                 )}
             </div>
         </section>

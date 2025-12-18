@@ -43,6 +43,7 @@ class JobPostController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'location' => 'required|string|max:255',
+            'application_url' => 'nullable|url|max:255',
         ]);
 
         JobPost::create($validated);
@@ -66,6 +67,7 @@ class JobPostController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'location' => 'required|string|max:255',
+            'application_url' => 'nullable|url|max:255',
         ]);
 
         $jobPost->update($validated);

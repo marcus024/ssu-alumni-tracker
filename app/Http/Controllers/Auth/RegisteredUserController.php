@@ -120,6 +120,9 @@ class RegisteredUserController extends Controller
 
             // Profile Picture
             'profile_picture' => 'nullable|image|max:2048', // Max 2MB
+
+            // Activity Images
+            'activity_images.*' => 'nullable|image|max:5120', // Max 5MB each
         ]);
 
         // Handle profile picture upload
@@ -128,6 +131,16 @@ class RegisteredUserController extends Controller
             $profilePicture = $request->file('profile_picture');
             $filename = time() . '_' . $profilePicture->getClientOriginalName();
             $profilePicturePath = $profilePicture->storeAs('profile_pictures', $filename, 'public');
+        }
+
+        // Handle activity images upload
+        $activityImagePaths = [];
+        if ($request->hasFile('activity_images')) {
+            foreach ($request->file('activity_images') as $index => $image) {
+                $filename = time() . '_activity_' . $index . '_' . $image->getClientOriginalName();
+                $path = $image->storeAs('activity_images', $filename, 'public');
+                $activityImagePaths[] = $path;
+            }
         }
 
         // Compose full name from parts
@@ -220,6 +233,9 @@ class RegisteredUserController extends Controller
 
             // Profile Picture
             'profile_picture' => $profilePicturePath,
+
+            // Activity Images
+            'activity_images' => $activityImagePaths,
         ]);
 
         event(new Registered($user));
