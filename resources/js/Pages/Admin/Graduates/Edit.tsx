@@ -152,7 +152,7 @@ export default function Edit({ graduate, departments }: EditProps) {
                                         <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                                             <label className={labelClass}>Profile Picture</label>
                                             <img
-                                                src={`/storage/${graduate.profile_picture}`}
+                                                src={`/uploads/${graduate.profile_picture}`}
                                                 alt="Profile"
                                                 className="w-32 h-32 rounded-full object-cover border-4 border-indigo-500"
                                             />
@@ -167,7 +167,7 @@ export default function Edit({ graduate, departments }: EditProps) {
                                                 {graduate.activity_images.map((image, index) => (
                                                     <img
                                                         key={index}
-                                                        src={`/storage/${image}`}
+                                                        src={`/uploads/${image}`}
                                                         alt={`Activity ${index + 1}`}
                                                         className="w-full h-32 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600"
                                                     />

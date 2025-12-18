@@ -125,21 +125,22 @@ class RegisteredUserController extends Controller
             'activity_images.*' => 'nullable|image|max:5120', // Max 5MB each
         ]);
 
-        // Handle profile picture upload
+        // Handle profile picture upload - Store in public/uploads instead of storage
         $profilePicturePath = null;
         if ($request->hasFile('profile_picture')) {
             $profilePicture = $request->file('profile_picture');
             $filename = time() . '_' . $profilePicture->getClientOriginalName();
-            $profilePicturePath = $profilePicture->storeAs('profile_pictures', $filename, 'public');
+            $profilePicture->move(public_path('uploads/profile_pictures'), $filename);
+            $profilePicturePath = 'profile_pictures/' . $filename;
         }
 
-        // Handle activity images upload
+        // Handle activity images upload - Store in public/uploads instead of storage
         $activityImagePaths = [];
         if ($request->hasFile('activity_images')) {
             foreach ($request->file('activity_images') as $index => $image) {
                 $filename = time() . '_activity_' . $index . '_' . $image->getClientOriginalName();
-                $path = $image->storeAs('activity_images', $filename, 'public');
-                $activityImagePaths[] = $path;
+                $image->move(public_path('uploads/activity_images'), $filename);
+                $activityImagePaths[] = 'activity_images/' . $filename;
             }
         }
 
@@ -187,8 +188,8 @@ class RegisteredUserController extends Controller
             'advance_study_date_started' => $validated['advance_study_date_started'],
             'advance_study_units_earned' => $validated['advance_study_units_earned'],
             'advance_study_date_graduated' => $validated['advance_study_date_graduated'],
-            'advance_study_reasons' => $validated['advance_study_reasons'],
-            'advance_study_reasons_other' => $validated['advance_study_reasons_other'],
+            'advance_study_reasons' => $validated['advance_study_reasons'] ?? [],
+            'advance_study_reasons_other' => $validated['advance_study_reasons_other'] ?? null,
 
             // Section C: Professional Examination
             'exam_name' => $validated['exam_name'],
@@ -208,20 +209,20 @@ class RegisteredUserController extends Controller
             'company_email' => $validated['company_email'],
             'company_contact' => $validated['company_contact'],
             'company_address' => $validated['company_address'],
-            'employment_status' => $validated['employment_status'],
-            'recent_position' => $validated['recent_position'],
+            'employment_status' => $validated['employment_status'] ?? [],
+            'recent_position' => $validated['recent_position'] ?? [],
             'business_name' => $validated['business_name'],
             'business_address' => $validated['business_address'],
             'business_nature' => $validated['business_nature'],
-            'reasons_for_staying' => $validated['reasons_for_staying'],
-            'reasons_for_staying_other' => $validated['reasons_for_staying_other'],
-            'reasons_for_unemployment' => $validated['reasons_for_unemployment'],
-            'reasons_for_unemployment_other' => $validated['reasons_for_unemployment_other'],
+            'reasons_for_staying' => $validated['reasons_for_staying'] ?? [],
+            'reasons_for_staying_other' => $validated['reasons_for_staying_other'] ?? null,
+            'reasons_for_unemployment' => $validated['reasons_for_unemployment'] ?? [],
+            'reasons_for_unemployment_other' => $validated['reasons_for_unemployment_other'] ?? null,
             'first_job_related' => $validated['first_job_related'],
-            'unrelated_job_reasons' => $validated['unrelated_job_reasons'],
-            'unrelated_job_reasons_other' => $validated['unrelated_job_reasons_other'],
-            'job_change_reasons' => $validated['job_change_reasons'],
-            'job_change_reasons_other' => $validated['job_change_reasons_other'],
+            'unrelated_job_reasons' => $validated['unrelated_job_reasons'] ?? [],
+            'unrelated_job_reasons_other' => $validated['unrelated_job_reasons_other'] ?? null,
+            'job_change_reasons' => $validated['job_change_reasons'] ?? [],
+            'job_change_reasons_other' => $validated['job_change_reasons_other'] ?? null,
             'first_job_duration' => $validated['first_job_duration'],
             'first_job_duration_other' => $validated['first_job_duration_other'],
             'how_found_first_job' => $validated['how_found_first_job'],

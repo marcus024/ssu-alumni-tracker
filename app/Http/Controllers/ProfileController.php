@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Department;
+use App\Models\Graduate;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,10 +20,14 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        // Get the graduate data for the current user based on email
+        $graduate = Graduate::where('email', $request->user()->email)->first();
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'departments' => Department::all(),
+            'graduate' => $graduate,
         ]);
     }
 

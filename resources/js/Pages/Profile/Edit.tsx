@@ -5,11 +5,13 @@ import { Head, usePage } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+import ViewGraduateProfile from './Partials/ViewGraduateProfile';
 
 export default function Edit({
     mustVerifyEmail,
     status,
-}: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
+    graduate,
+}: PageProps<{ mustVerifyEmail: boolean; status?: string; graduate?: any }>) {
     const { auth } = usePage().props as any;
     const isAdmin = auth.user?.role === 'admin';
 
@@ -19,7 +21,12 @@ export default function Edit({
         <Layout header="Profile Settings">
             <Head title="Profile Settings" />
 
-            <div className="max-w-4xl space-y-6">
+            <div className="max-w-7xl space-y-6">
+                {/* Graduate Profile Details - Only show for graduates */}
+                {!isAdmin && graduate && (
+                    <ViewGraduateProfile graduate={graduate} />
+                )}
+
                 <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6">
                     <UpdateProfileInformationForm
                         mustVerifyEmail={mustVerifyEmail}

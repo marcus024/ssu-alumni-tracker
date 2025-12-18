@@ -86,6 +86,7 @@ export default function Register({ departments }: RegisterProps) {
     const [currentStep, setCurrentStep] = useState(1);
     const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
     const [activityImagePreviews, setActivityImagePreviews] = useState<string[]>([]);
+    const [validationErrors, setValidationErrors] = useState<string[]>([]);
     const totalSteps = 5;
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
@@ -277,15 +278,67 @@ export default function Register({ departments }: RegisterProps) {
         setActivityImagePreviews(newPreviews);
     };
 
-    const nextStep = () => {
-        if (currentStep < totalSteps) {
-            setCurrentStep(currentStep + 1);
+    const validateStep = (step: number): boolean => {
+        const newErrors: string[] = [];
+
+        // Helper function to check if a field is empty (null, undefined, or whitespace)
+        const isEmpty = (value: any): boolean => {
+            return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+        };
+
+        if (step === 1) {
+            // Account & General Information
+            if (isEmpty(data.email)) newErrors.push('Email is required');
+            if (isEmpty(data.password)) newErrors.push('Password is required');
+            if (isEmpty(data.password_confirmation)) newErrors.push('Password confirmation is required');
+            if (!isEmpty(data.password) && !isEmpty(data.password_confirmation) && data.password !== data.password_confirmation) {
+                newErrors.push('Passwords do not match');
+            }
+            if (isEmpty(data.surname)) newErrors.push('Surname is required');
+            if (isEmpty(data.first_name)) newErrors.push('First name is required');
+            if (isEmpty(data.phone)) newErrors.push('Phone number is required');
+            if (isEmpty(data.permanent_address)) newErrors.push('Permanent address is required');
+            if (isEmpty(data.sex)) newErrors.push('Sex is required');
+            if (isEmpty(data.civil_status)) newErrors.push('Civil status is required');
+        } else if (step === 2) {
+            // Educational Background
+            if (isEmpty(data.year)) newErrors.push('Year graduated is required');
+            if (isEmpty(data.college_campus)) newErrors.push('College/Campus is required');
+            if (isEmpty(data.department_id)) newErrors.push('Department is required');
+            if (isEmpty(data.program)) newErrors.push('Program is required');
+            if (isEmpty(data.course)) newErrors.push('Course is required');
+        } else if (step === 3) {
+            // Professional Exam & Trainings - All optional, no validation needed
+        } else if (step === 4) {
+            // Employment Data Part 1
+            if (isEmpty(data.ever_employed)) newErrors.push('Please indicate if you have ever been employed');
+        } else if (step === 5) {
+            // Employment Data Part 2 - Optional fields based on employment status
+        }
+
+        setValidationErrors(newErrors);
+
+        if (newErrors.length > 0) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return false;
+        }
+
+        return true;
+    };
+
+    const nextStep = () => {
+        if (validateStep(currentStep)) {
+            if (currentStep < totalSteps) {
+                setValidationErrors([]);
+                setCurrentStep(currentStep + 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
+            setValidationErrors([]);
             setCurrentStep(currentStep - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -323,6 +376,25 @@ export default function Register({ departments }: RegisterProps) {
             </div>
 
             <form onSubmit={submit} className="space-y-4">
+                {/* Validation Errors Display */}
+                {validationErrors.length > 0 && (
+                    <div className="bg-red-500/20 border border-red-500 rounded-lg p-4 mb-4">
+                        <div className="flex items-start">
+                            <svg className="w-5 h-5 text-red-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            </svg>
+                            <div className="flex-1">
+                                <h4 className="text-red-400 font-semibold mb-2">Please fix the following errors:</h4>
+                                <ul className="list-disc list-inside space-y-1 text-red-300 text-sm">
+                                    {validationErrors.map((error, index) => (
+                                        <li key={index}>{error}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Step 1: Account & Basic Info */}
                 {currentStep === 1 && (
                     <div className="space-y-4">

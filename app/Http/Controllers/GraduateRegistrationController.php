@@ -104,21 +104,21 @@ class GraduateRegistrationController extends Controller
             'activity_images.*' => 'nullable|image|max:5120', // Max 5MB each
         ]);
 
-        // Handle profile picture upload
+        // Handle profile picture upload - Store in public/uploads instead of storage
         if ($request->hasFile('profile_picture')) {
             $profilePicture = $request->file('profile_picture');
             $filename = time() . '_' . $profilePicture->getClientOriginalName();
-            $path = $profilePicture->storeAs('profile_pictures', $filename, 'public');
-            $validated['profile_picture'] = $path;
+            $profilePicture->move(public_path('uploads/profile_pictures'), $filename);
+            $validated['profile_picture'] = 'profile_pictures/' . $filename;
         }
 
-        // Handle activity images upload
+        // Handle activity images upload - Store in public/uploads instead of storage
         $activityImagePaths = [];
         if ($request->hasFile('activity_images')) {
             foreach ($request->file('activity_images') as $index => $image) {
                 $filename = time() . '_activity_' . $index . '_' . $image->getClientOriginalName();
-                $path = $image->storeAs('activity_images', $filename, 'public');
-                $activityImagePaths[] = $path;
+                $image->move(public_path('uploads/activity_images'), $filename);
+                $activityImagePaths[] = 'activity_images/' . $filename;
             }
         }
         $validated['activity_images'] = $activityImagePaths;

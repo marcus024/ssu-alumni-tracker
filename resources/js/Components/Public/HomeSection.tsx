@@ -18,7 +18,7 @@ export default function HomeSection({ news, jobPosts, schoolInfo, graduates }: H
     graduates.forEach(graduate => {
         if (graduate.activity_images && Array.isArray(graduate.activity_images)) {
             graduate.activity_images.forEach(image => {
-                activityImages.push(`/storage/${image}`);
+                activityImages.push(`/uploads/${image}`);
             });
         }
     });

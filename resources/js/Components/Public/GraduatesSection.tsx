@@ -82,7 +82,7 @@ export default function GraduatesSection({ graduates, departments }: GraduatesSe
                                         <div className="w-16 h-16 rounded-full mr-4 overflow-hidden border-2 border-blue-500 dark:border-blue-400">
                                             {graduate.profile_picture ? (
                                                 <img
-                                                    src={`/storage/${graduate.profile_picture}`}
+                                                    src={`/uploads/${graduate.profile_picture}`}
                                                     alt={graduate.name}
                                                     className="w-full h-full object-cover"
                                                 />

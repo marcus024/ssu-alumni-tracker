@@ -32,7 +32,7 @@ export default function GallerySection({ images, graduates }: GallerySectionProp
             if (graduate.activity_images && Array.isArray(graduate.activity_images)) {
                 return graduate.activity_images.map((image, index) => ({
                     id: `activity-${graduate.id}-${index}`,
-                    src: `/storage/${image}`,
+                    src: `/uploads/${image}`,
                     description: `Alumni Activity - ${graduate.name}`,
                     date: graduate.created_at,
                     type: 'activity' as const,
