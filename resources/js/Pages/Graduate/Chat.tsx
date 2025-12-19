@@ -107,7 +107,7 @@ export default function Chat({ conversations: initialConversations, graduate }: 
                 // Remove optimistic message on error
                 setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
                 setReplyMessage(messageToSend);
-                alert('Failed to send message. Please try again.');
+                // No popup - message is simply removed and restored to input
             },
             onFinish: () => {
                 setIsSending(false);
