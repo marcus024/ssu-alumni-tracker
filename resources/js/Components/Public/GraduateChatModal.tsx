@@ -38,12 +38,9 @@ export default function GraduateChatModal({ isOpen, onClose, graduate }: Graduat
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                setSuccessMessage('Message sent successfully! The graduate will receive your message.');
+                // Close modal immediately without showing message
                 setFormData({ sender_name: '', sender_email: '', message: '' });
-                setTimeout(() => {
-                    onClose();
-                    setSuccessMessage('');
-                }, 2000);
+                onClose();
             },
             onError: (errors) => {
                 console.error('Error sending message:', errors);
