@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Graduate;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -105,7 +106,14 @@ class GraduateController extends Controller
             'status' => 'required|in:pending,approved,rejected',
         ]);
 
+        // Update graduate status
         $graduate->update(['status' => $validated['status']]);
+
+        // Also update the corresponding user status if the user exists
+        if ($graduate->email) {
+            User::where('email', $graduate->email)
+                ->update(['status' => $validated['status']]);
+        }
 
         return redirect()->back()->with('success', 'Graduate status updated successfully.');
     }

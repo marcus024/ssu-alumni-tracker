@@ -48,6 +48,12 @@ Route::post('/job-applications', [App\Http\Controllers\JobApplicationController:
 
 Route::post('/graduate/register', [App\Http\Controllers\GraduateRegistrationController::class, 'store'])->name('graduate.register');
 
+// Public message to graduate
+Route::post('/messages/send', [App\Http\Controllers\MessageController::class, 'sendPublicMessage'])->name('messages.send');
+
+// Public chat view for graduate
+Route::get('/graduates/{graduate}/chat', [App\Http\Controllers\MessageController::class, 'publicChat'])->name('graduates.chat');
+
 // Public Department Details
 Route::get('/departments/{department}', function (Department $department) {
     return Inertia::render('DepartmentDetails', [
@@ -101,6 +107,11 @@ Route::middleware('auth')->group(function () {
 // Graduate routes
 Route::prefix('graduate')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Graduate\DashboardController::class, 'index'])->name('graduate.dashboard');
+
+    // Chat/Messages routes
+    Route::get('/chat', [App\Http\Controllers\MessageController::class, 'index'])->name('graduate.chat.index');
+    Route::get('/chat/{senderEmail}', [App\Http\Controllers\MessageController::class, 'getConversation'])->name('graduate.chat.conversation');
+    Route::post('/chat/reply', [App\Http\Controllers\MessageController::class, 'sendReply'])->name('graduate.chat.reply');
 });
 
 // Admin routes
