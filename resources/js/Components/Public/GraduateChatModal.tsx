@@ -25,43 +25,34 @@ export default function GraduateChatModal({ isOpen, onClose, graduate }: Graduat
 
     if (!isOpen) return null;
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         setErrors({});
         setSuccessMessage('');
 
-        try {
-            const response = await fetch('/messages/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-                body: JSON.stringify({
-                    graduate_id: graduate.id,
-                    ...formData,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
+        router.post('/messages/send', {
+            graduate_id: graduate.id,
+            ...formData,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
                 setSuccessMessage('Message sent successfully! The graduate will receive your message.');
                 setFormData({ sender_name: '', sender_email: '', message: '' });
                 setTimeout(() => {
                     onClose();
                     setSuccessMessage('');
                 }, 2000);
-            } else {
-                setErrors(data.errors || {});
-            }
-        } catch (error) {
-            console.error('Error sending message:', error);
-            setErrors({ general: 'An error occurred. Please try again.' });
-        } finally {
-            setIsSubmitting(false);
-        }
+            },
+            onError: (errors) => {
+                console.error('Error sending message:', errors);
+                setErrors(errors || { general: 'An error occurred. Please try again.' });
+            },
+            onFinish: () => {
+                setIsSubmitting(false);
+            },
+        });
     };
 
     return (

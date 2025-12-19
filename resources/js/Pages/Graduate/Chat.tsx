@@ -70,7 +70,7 @@ export default function Chat({ conversations: initialConversations, graduate }: 
         }
     };
 
-    const sendReply = async (e: React.FormEvent) => {
+    const sendReply = (e: React.FormEvent) => {
         e.preventDefault();
         if (!replyMessage.trim() || !selectedConversation || isSending) return;
 
@@ -91,37 +91,28 @@ export default function Chat({ conversations: initialConversations, graduate }: 
         setReplyMessage('');
         setIsSending(true);
 
-        try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-            const response = await fetch('/graduate/chat/reply', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    sender_email: conversationEmail,
-                    message: messageToSend,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to send message');
-            }
-
-            // Silently reload conversation in background to get the real message ID
-            loadConversation(conversationEmail);
-        } catch (error) {
-            console.error('Error sending reply:', error);
-            // Remove optimistic message on error
-            setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
-            setReplyMessage(messageToSend); // Restore the message
-            alert('Failed to send message. Please try again.');
-        } finally {
-            setIsSending(false);
-        }
+        router.post('/graduate/chat/reply', {
+            sender_email: conversationEmail,
+            message: messageToSend,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+            only: [], // Don't reload any props
+            onSuccess: () => {
+                // Silently reload conversation in background
+                loadConversation(conversationEmail);
+            },
+            onError: (errors) => {
+                console.error('Error sending reply:', errors);
+                // Remove optimistic message on error
+                setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+                setReplyMessage(messageToSend);
+                alert('Failed to send message. Please try again.');
+            },
+            onFinish: () => {
+                setIsSending(false);
+            },
+        });
     };
 
     const formatDate = (dateString: string) => {
