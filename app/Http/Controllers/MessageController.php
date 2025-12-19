@@ -30,7 +30,7 @@ class MessageController extends Controller
             'is_from_graduate' => false,
         ]);
 
-        return response()->json(['message' => 'Message sent successfully!']);
+        return back();
     }
 
     /**
@@ -117,7 +117,7 @@ class MessageController extends Controller
             'is_from_graduate' => true,
         ]);
 
-        return response()->json(['message' => 'Reply sent successfully!']);
+        return back();
     }
 
     /**
