@@ -14,6 +14,7 @@ export default function AllGraduates({ departments, graduates }: AllGraduatesPro
     const [isDark, setIsDark] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
+    const [selectedYear, setSelectedYear] = useState<string>('all');
     const [showChatModal, setShowChatModal] = useState(false);
     const [selectedGraduate, setSelectedGraduate] = useState<Graduate | null>(null);
 
@@ -41,6 +42,12 @@ export default function AllGraduates({ departments, graduates }: AllGraduatesPro
         }
     };
 
+    // Get unique years from graduates for filter dropdown
+    const availableYears = Array.from(new Set(graduates.map(g => g.year)))
+        .sort((a, b) => b - a);
+
+    const currentYear = new Date().getFullYear();
+
     const filteredGraduates = graduates.filter((grad) => {
         const matchesSearch =
             grad.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,8 +58,20 @@ export default function AllGraduates({ departments, graduates }: AllGraduatesPro
             selectedDepartment === 'all' ||
             grad.department_id?.toString() === selectedDepartment;
 
-        return matchesSearch && matchesDepartment;
+        const matchesYear =
+            selectedYear === 'all' ||
+            grad.year.toString() === selectedYear;
+
+        return matchesSearch && matchesDepartment && matchesYear;
     });
+
+    // Analytics calculations
+    const totalGraduates = graduates.length;
+    const graduatesThisYear = graduates.filter(g => g.year === currentYear).length;
+
+    // Analytics for filtered results
+    const filteredTotal = filteredGraduates.length;
+    const filteredThisYear = filteredGraduates.filter(g => g.year === currentYear).length;
 
     return (
         <>
@@ -73,9 +92,64 @@ export default function AllGraduates({ departments, graduates }: AllGraduatesPro
                             </p>
                         </div>
 
+                        {/* Analytics Section */}
+                        <div className="max-w-6xl mx-auto mb-12">
+                            <div className="grid md:grid-cols-3 gap-6">
+                                {/* Total Graduates Card */}
+                                <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-xl p-6 text-white shadow-lg">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-sm font-medium opacity-90">Total Graduates</h3>
+                                        <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-4xl font-bold mb-1">
+                                        {selectedDepartment === 'all' && selectedYear === 'all' ? totalGraduates : filteredTotal}
+                                    </p>
+                                    <p className="text-sm opacity-80">
+                                        {selectedDepartment !== 'all' || selectedYear !== 'all' ? 'Matching filters' : 'All time'}
+                                    </p>
+                                </div>
+
+                                {/* Graduates This Year Card */}
+                                <div className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 rounded-xl p-6 text-white shadow-lg">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-sm font-medium opacity-90">Graduates {currentYear}</h3>
+                                        <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-4xl font-bold mb-1">
+                                        {selectedDepartment === 'all' && selectedYear === 'all' ? graduatesThisYear : filteredThisYear}
+                                    </p>
+                                    <p className="text-sm opacity-80">
+                                        {selectedDepartment !== 'all' || selectedYear !== 'all' ? 'Matching filters' : 'This year'}
+                                    </p>
+                                </div>
+
+                                {/* Average per Year Card */}
+                                <div className="bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 rounded-xl p-6 text-white shadow-lg">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-sm font-medium opacity-90">Active Filters</h3>
+                                        <svg className="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-2xl font-bold mb-1">
+                                        {(selectedDepartment !== 'all' ? 1 : 0) + (selectedYear !== 'all' ? 1 : 0) + (searchQuery ? 1 : 0)}
+                                    </p>
+                                    <p className="text-sm opacity-80">
+                                        {selectedDepartment === 'all' && selectedYear === 'all' && !searchQuery ? 'No filters applied' : 'Applied'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Filters Section */}
-                        <div className="max-w-4xl mx-auto mb-12">
-                            <div className="grid md:grid-cols-2 gap-4">
+                        <div className="max-w-6xl mx-auto mb-12">
+                            <div className="grid md:grid-cols-3 gap-4">
                                 {/* Search Bar */}
                                 <div className="relative">
                                     <input
@@ -126,13 +200,60 @@ export default function AllGraduates({ departments, graduates }: AllGraduatesPro
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
+
+                                {/* Year Filter */}
+                                <div className="relative">
+                                    <select
+                                        value={selectedYear}
+                                        onChange={(e) => setSelectedYear(e.target.value)}
+                                        className="w-full px-4 py-3 pl-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-600 focus:border-transparent appearance-none"
+                                    >
+                                        <option value="all">All Years</option>
+                                        {availableYears.map((year) => (
+                                            <option key={year} value={year.toString()}>
+                                                {year}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <svg
+                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <svg
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
 
-                            {/* Results Count */}
-                            <div className="mt-4 text-center">
+                            {/* Results Count & Clear Filters */}
+                            <div className="mt-4 flex justify-between items-center">
                                 <p className="text-gray-600 dark:text-gray-400">
                                     Showing <span className="font-semibold text-gray-900 dark:text-white">{filteredGraduates.length}</span> graduate{filteredGraduates.length !== 1 ? 's' : ''}
                                 </p>
+                                {(selectedDepartment !== 'all' || selectedYear !== 'all' || searchQuery) && (
+                                    <button
+                                        onClick={() => {
+                                            setSelectedDepartment('all');
+                                            setSelectedYear('all');
+                                            setSearchQuery('');
+                                        }}
+                                        className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium flex items-center gap-1"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Clear All Filters
+                                    </button>
+                                )}
                             </div>
                         </div>
 

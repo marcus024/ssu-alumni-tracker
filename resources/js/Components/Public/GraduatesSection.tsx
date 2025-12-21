@@ -22,7 +22,8 @@ export default function GraduatesSection({ graduates, departments }: GraduatesSe
             grad.current_work.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const displayedGraduates = filteredGraduates.slice(0, 8);
+    // Show only first 3 graduates
+    const displayedGraduates = filteredGraduates.slice(0, 3);
 
     return (
         <section id="graduates" className="py-20 bg-white dark:bg-gray-900">
@@ -159,7 +160,7 @@ export default function GraduatesSection({ graduates, departments }: GraduatesSe
                             ))}
                         </div>
 
-                        {filteredGraduates.length > 8 && (
+                        {filteredGraduates.length > 3 && (
                             <div className="text-center">
                                 <Link
                                     href="/graduates"
