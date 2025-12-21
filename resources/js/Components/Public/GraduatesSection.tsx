@@ -10,7 +10,6 @@ interface GraduatesSectionProps {
 }
 
 export default function GraduatesSection({ graduates, departments }: GraduatesSectionProps) {
-    const [showAll, setShowAll] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [showRegistrationModal, setShowRegistrationModal] = useState(false);
     const [showChatModal, setShowChatModal] = useState(false);
@@ -23,9 +22,7 @@ export default function GraduatesSection({ graduates, departments }: GraduatesSe
             grad.current_work.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const displayedGraduates = showAll
-        ? filteredGraduates
-        : filteredGraduates.slice(0, 6);
+    const displayedGraduates = filteredGraduates.slice(0, 8);
 
     return (
         <section id="graduates" className="py-20 bg-white dark:bg-gray-900">
@@ -162,31 +159,17 @@ export default function GraduatesSection({ graduates, departments }: GraduatesSe
                             ))}
                         </div>
 
-                        {!showAll && filteredGraduates.length > 6 && (
+                        {filteredGraduates.length > 8 && (
                             <div className="text-center">
-                                <button
-                                    onClick={() => setShowAll(true)}
+                                <Link
+                                    href="/graduates"
                                     className="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
                                 >
-                                    Show More Graduates
+                                    See All Graduates
                                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>
-                                </button>
-                            </div>
-                        )}
-
-                        {showAll && (
-                            <div className="text-center">
-                                <button
-                                    onClick={() => setShowAll(false)}
-                                    className="inline-flex items-center px-8 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
-                                >
-                                    Show Less
-                                    <svg className="w-5 h-5 ml-2 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
+                                </Link>
                             </div>
                         )}
                     </>

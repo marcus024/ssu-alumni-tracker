@@ -36,6 +36,18 @@ export interface JobPost {
     updated_at: string;
 }
 
+export interface Campus {
+    id: number;
+    name: string;
+    description?: string;
+    location?: string;
+    is_active: boolean;
+    departments_count?: number;
+    departments?: Department[];
+    created_at: string;
+    updated_at: string;
+}
+
 export interface Department {
     id: number;
     name: string;
@@ -43,6 +55,23 @@ export interface Department {
     logo?: string;
     total_students: number;
     total_teachers: number;
+    campus_id?: number;
+    campus?: Campus;
+    courses?: Course[];
+    is_active: boolean;
+    graduates_count?: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Course {
+    id: number;
+    name: string;
+    code: string;
+    description?: string;
+    department_id: number;
+    department?: Department;
+    is_active: boolean;
     created_at: string;
     updated_at: string;
 }

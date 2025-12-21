@@ -5,13 +5,20 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
+import { Campus } from '@/types';
 
-export default function Create() {
+interface Props {
+    campuses: Campus[];
+}
+
+export default function Create({ campuses }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         description: '',
         total_students: 0,
         total_teachers: 0,
+        campus_id: '',
+        is_active: true,
         logo: null as File | null,
     });
 
@@ -52,6 +59,25 @@ export default function Create() {
                                         required
                                     />
                                     <InputError message={errors.name} className="mt-2" />
+                                </div>
+
+                                <div>
+                                    <InputLabel htmlFor="campus_id" value="Campus *" />
+                                    <select
+                                        id="campus_id"
+                                        className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                        value={data.campus_id}
+                                        onChange={(e) => setData('campus_id', e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Select a campus</option>
+                                        {campuses.map((campus) => (
+                                            <option key={campus.id} value={campus.id}>
+                                                {campus.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <InputError message={errors.campus_id} className="mt-2" />
                                 </div>
 
                                 <div>
@@ -111,6 +137,18 @@ export default function Create() {
                                             dark:file:bg-indigo-900/50 dark:file:text-indigo-300"
                                     />
                                     <InputError message={errors.logo} className="mt-2" />
+                                </div>
+
+                                {/* Active Status */}
+                                <div className="flex items-center">
+                                    <input
+                                        id="is_active"
+                                        type="checkbox"
+                                        className="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700"
+                                        checked={data.is_active}
+                                        onChange={(e) => setData('is_active', e.target.checked)}
+                                    />
+                                    <InputLabel htmlFor="is_active" value="Active" className="ml-2" />
                                 </div>
 
                                 <div className="flex items-center justify-end gap-4">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Models\Campus;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::latest()->get();
+        $departments = Department::with('campus')->latest()->get();
 
         return Inertia::render('Admin/Departments/Index', [
             'departments' => $departments,
@@ -27,7 +28,11 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Departments/Create');
+        $campuses = Campus::where('is_active', true)->orderBy('name')->get();
+
+        return Inertia::render('Admin/Departments/Create', [
+            'campuses' => $campuses,
+        ]);
     }
 
     /**
@@ -41,6 +46,8 @@ class DepartmentController extends Controller
             'logo' => 'nullable|image|max:2048',
             'total_students' => 'required|integer|min:0',
             'total_teachers' => 'required|integer|min:0',
+            'campus_id' => 'required|exists:campuses,id',
+            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -68,8 +75,11 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
+        $campuses = Campus::where('is_active', true)->orderBy('name')->get();
+
         return Inertia::render('Admin/Departments/Edit', [
-            'department' => $department,
+            'department' => $department->load('campus'),
+            'campuses' => $campuses,
         ]);
     }
 
@@ -84,6 +94,8 @@ class DepartmentController extends Controller
             'logo' => 'nullable|image|max:2048',
             'total_students' => 'required|integer|min:0',
             'total_teachers' => 'required|integer|min:0',
+            'campus_id' => 'required|exists:campuses,id',
+            'is_active' => 'boolean',
         ]);
 
         if ($request->hasFile('logo')) {

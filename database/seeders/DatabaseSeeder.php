@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin User',
             'email' => 'admin@ssu.edu',
             'password' => bcrypt('password'), // Change this in production!
+            'role' => 'admin',
         ]);
 
         // Seed all data

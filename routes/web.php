@@ -48,11 +48,22 @@ Route::post('/job-applications', [App\Http\Controllers\JobApplicationController:
 
 Route::post('/graduate/register', [App\Http\Controllers\GraduateRegistrationController::class, 'store'])->name('graduate.register');
 
+// Check email availability
+Route::post('/api/check-email', [App\Http\Controllers\Auth\RegisteredUserController::class, 'checkEmail'])->name('api.check-email');
+
 // Public message to graduate
 Route::post('/messages/send', [App\Http\Controllers\MessageController::class, 'sendPublicMessage'])->name('messages.send');
 
 // Public chat view for graduate
 Route::get('/graduates/{graduate}/chat', [App\Http\Controllers\MessageController::class, 'publicChat'])->name('graduates.chat');
+
+// All Graduates page
+Route::get('/graduates', function () {
+    return Inertia::render('AllGraduates', [
+        'departments' => Department::all(),
+        'graduates' => Graduate::with('department')->where('status', 'approved')->latest()->get(),
+    ]);
+})->name('graduates.index');
 
 // Public Department Details
 Route::get('/departments/{department}', function (Department $department) {
@@ -251,6 +262,28 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     // Donations routes
     Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
     Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.updateStatus');
+
+    // Campuses routes
+    Route::resource('campuses', App\Http\Controllers\Admin\CampusController::class)->names([
+        'index' => 'admin.campuses.index',
+        'create' => 'admin.campuses.create',
+        'store' => 'admin.campuses.store',
+        'show' => 'admin.campuses.show',
+        'edit' => 'admin.campuses.edit',
+        'update' => 'admin.campuses.update',
+        'destroy' => 'admin.campuses.destroy',
+    ]);
+
+    // Courses routes
+    Route::resource('courses', App\Http\Controllers\Admin\CourseController::class)->names([
+        'index' => 'admin.courses.index',
+        'create' => 'admin.courses.create',
+        'store' => 'admin.courses.store',
+        'show' => 'admin.courses.show',
+        'edit' => 'admin.courses.edit',
+        'update' => 'admin.courses.update',
+        'destroy' => 'admin.courses.destroy',
+    ]);
 
     // Live View route
     Route::get('/live-view', function () {

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Graduate;
 use App\Models\Department;
+use App\Models\Campus;
+use App\Models\Course;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +25,9 @@ class RegisteredUserController extends Controller
     public function create(): Response
     {
         return Inertia::render('Auth/Register', [
-            'departments' => Department::all(),
+            'campuses' => Campus::where('is_active', true)->orderBy('name')->get(),
+            'departments' => Department::with('campus')->orderBy('name')->get(),
+            'courses' => Course::with('department')->where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
@@ -34,7 +38,8 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        try {
+            $validated = $request->validate([
             // Account & Authentication
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -42,7 +47,7 @@ class RegisteredUserController extends Controller
             // Section A: General Information
             'surname' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
+            'middle_name' => 'required|string|max:255',
             'phone' => 'required|string|max:255',
             'permanent_address' => 'required|string',
             'sex' => 'required|in:Male,Female',
@@ -78,9 +83,9 @@ class RegisteredUserController extends Controller
             // Section E: Employment Data
             'ever_employed' => 'required|in:Yes,No',
 
-            // Current/Recent Employment (Required if employed)
-            'company_name' => $request->ever_employed === 'Yes' ? 'required|string|max:255' : 'nullable|string|max:255',
-            'company_nature' => $request->ever_employed === 'Yes' ? 'nullable|string|max:255' : 'nullable|string|max:255',
+            // Current/Recent Employment
+            'company_name' => 'nullable|string|max:255',
+            'company_nature' => 'nullable|string|max:255',
             'company_email' => 'nullable|email|max:255',
             'company_contact' => 'nullable|string|max:255',
             'company_address' => 'nullable|string',
@@ -122,15 +127,27 @@ class RegisteredUserController extends Controller
             'profile_picture' => 'nullable|image|max:2048', // Max 2MB
 
             // Activity Images
+            'activity_images' => 'nullable|array',
             'activity_images.*' => 'nullable|image|max:5120', // Max 5MB each
         ]);
+
+        // Ensure upload directories exist
+        $profilePictureDir = public_path('uploads/profile_pictures');
+        $activityImagesDir = public_path('uploads/activity_images');
+
+        if (!file_exists($profilePictureDir)) {
+            mkdir($profilePictureDir, 0755, true);
+        }
+        if (!file_exists($activityImagesDir)) {
+            mkdir($activityImagesDir, 0755, true);
+        }
 
         // Handle profile picture upload - Store in public/uploads instead of storage
         $profilePicturePath = null;
         if ($request->hasFile('profile_picture')) {
             $profilePicture = $request->file('profile_picture');
-            $filename = time() . '_' . $profilePicture->getClientOriginalName();
-            $profilePicture->move(public_path('uploads/profile_pictures'), $filename);
+            $filename = time() . '_' . uniqid() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $profilePicture->getClientOriginalName());
+            $profilePicture->move($profilePictureDir, $filename);
             $profilePicturePath = 'profile_pictures/' . $filename;
         }
 
@@ -138,8 +155,8 @@ class RegisteredUserController extends Controller
         $activityImagePaths = [];
         if ($request->hasFile('activity_images')) {
             foreach ($request->file('activity_images') as $index => $image) {
-                $filename = time() . '_activity_' . $index . '_' . $image->getClientOriginalName();
-                $image->move(public_path('uploads/activity_images'), $filename);
+                $filename = time() . '_activity_' . $index . '_' . uniqid() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $image->getClientOriginalName());
+                $image->move($activityImagesDir, $filename);
                 $activityImagePaths[] = 'activity_images/' . $filename;
             }
         }
@@ -244,5 +261,35 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect()->route('graduate.dashboard');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Let validation exceptions pass through
+            throw $e;
+        } catch (\Exception $e) {
+            // Log other errors
+            \Log::error('Registration error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return back()->withErrors([
+                'error' => 'An error occurred during registration. Please try again. Error: ' . $e->getMessage()
+            ])->withInput();
+        }
+    }
+
+    /**
+     * Check if an email is already registered
+     */
+    public function checkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $exists = User::where('email', $request->email)->exists();
+
+        return response()->json([
+            'available' => !$exists,
+            'message' => $exists ? 'This email is already registered.' : 'Email is available.'
+        ]);
     }
 }

@@ -2,12 +2,15 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { PageProps, Department } from '@/types';
-import { FormEventHandler, useState } from 'react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
+import { PageProps, Department, Campus, Course } from '@/types';
+import { FormEventHandler, useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 
 interface RegisterProps extends PageProps {
+    campuses: Campus[];
     departments: Department[];
+    courses: Course[];
 }
 
 // Form data structure with all 52 fields
@@ -82,11 +85,17 @@ interface FormData {
     activity_images: File[];
 }
 
-export default function Register({ departments }: RegisterProps) {
+export default function Register({ campuses, departments, courses }: RegisterProps) {
     const [currentStep, setCurrentStep] = useState(1);
     const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
     const [activityImagePreviews, setActivityImagePreviews] = useState<string[]>([]);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    const [selectedCampus, setSelectedCampus] = useState<string>('');
+    const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+    const [emailChecking, setEmailChecking] = useState(false);
+    const [emailError, setEmailError] = useState<string>('');
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [submissionError, setSubmissionError] = useState<string>('');
     const totalSteps = 5;
 
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
@@ -156,7 +165,19 @@ export default function Register({ departments }: RegisterProps) {
     // Form Options from Google Form
     const currentYear = new Date().getFullYear();
     const yearOptions = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i);
-    const collegeOptions = ['COED', 'CAS', 'COENG', 'College of Industrial Technology', 'CONHS', 'Mercedes Campus', 'Paranas Campus', 'Graduate School'];
+
+    // Filter departments by selected campus
+    const filteredDepartments = useMemo(() => {
+        if (!selectedCampus) return departments;
+        return departments.filter(dept => dept.campus_id?.toString() === selectedCampus);
+    }, [selectedCampus, departments]);
+
+    // Filter courses by selected department
+    const filteredCourses = useMemo(() => {
+        if (!data.department_id) return [];
+        return courses.filter(course => course.department_id.toString() === data.department_id);
+    }, [data.department_id, courses]);
+
     const programOptions = ['BS Psychology', 'BSIT', 'BSN', 'PhD in Education', 'Master in Education', 'BS Computer Science', 'BS Information Systems',
         'BS Business Administration', 'BS Accountancy', 'BS Civil Engineering', 'BS Electrical Engineering', 'BS Electronics Engineering',
         'BS Mechanical Engineering', 'BS Architecture', 'Elementary Education', 'Secondary Education', 'Physical Education',
@@ -228,6 +249,37 @@ export default function Register({ departments }: RegisterProps) {
         '₱50,000 to ₱99,999', '₱100,000 and above'
     ];
 
+    // Email validation with debounce
+    useEffect(() => {
+        const checkEmail = async () => {
+            if (data.email && data.email.includes('@')) {
+                setEmailChecking(true);
+                setEmailError('');
+
+                try {
+                    const response = await axios.post('/api/check-email', {
+                        email: data.email
+                    });
+
+                    setEmailAvailable(response.data.available);
+                    if (!response.data.available) {
+                        setEmailError(response.data.message);
+                    }
+                } catch (error) {
+                    console.error('Email validation error:', error);
+                } finally {
+                    setEmailChecking(false);
+                }
+            } else {
+                setEmailAvailable(null);
+                setEmailError('');
+            }
+        };
+
+        const timer = setTimeout(checkEmail, 500);
+        return () => clearTimeout(timer);
+    }, [data.email]);
+
     const handleCheckboxChange = (field: keyof FormData, value: string) => {
         const currentArray = data[field] as string[];
         const newArray = currentArray.includes(value)
@@ -289,6 +341,7 @@ export default function Register({ departments }: RegisterProps) {
         if (step === 1) {
             // Account & General Information
             if (isEmpty(data.email)) newErrors.push('Email is required');
+            else if (emailError || emailAvailable === false) newErrors.push('This email is already registered. Please use a different email.');
             if (isEmpty(data.password)) newErrors.push('Password is required');
             if (isEmpty(data.password_confirmation)) newErrors.push('Password confirmation is required');
             if (!isEmpty(data.password) && !isEmpty(data.password_confirmation) && data.password !== data.password_confirmation) {
@@ -346,8 +399,27 @@ export default function Register({ departments }: RegisterProps) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
+        // Final validation before submission
+        if (!validateStep(currentStep)) {
+            return;
+        }
+
         post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
+            onSuccess: () => {
+                // Registration successful
+                reset('password', 'password_confirmation');
+            },
+            onError: (errors) => {
+                // Show error modal with details
+                const errorMessages = Object.values(errors).flat().join(' ');
+                setSubmissionError(errorMessages || 'An error occurred during registration. Please check your information and try again.');
+                setShowErrorModal(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            onFinish: () => {
+                // This runs after onSuccess or onError
+            },
         });
     };
 
@@ -538,15 +610,43 @@ export default function Register({ departments }: RegisterProps) {
 
                         <div>
                             <label htmlFor="email" className={labelClass}>Email Address *</label>
-                            <TextInput
-                                id="email"
-                                type="email"
-                                value={data.email}
-                                className={inputClass}
-                                placeholder="your.email@example.com"
-                                onChange={(e) => setData('email', e.target.value)}
-                                required
-                            />
+                            <div className="relative">
+                                <TextInput
+                                    id="email"
+                                    type="email"
+                                    value={data.email}
+                                    className={inputClass}
+                                    placeholder="your.email@example.com"
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    required
+                                />
+                                {emailChecking && (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                        <svg className="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                )}
+                                {!emailChecking && emailAvailable === true && data.email && (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                        <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                )}
+                                {!emailChecking && emailAvailable === false && data.email && (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                        <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                )}
+                            </div>
+                            {emailError && <p className="mt-1 text-sm text-red-400">{emailError}</p>}
+                            {!emailChecking && emailAvailable === true && data.email && (
+                                <p className="mt-1 text-sm text-green-400">Email is available</p>
+                            )}
                             <InputError message={errors.email} className="mt-1 text-red-300" />
                         </div>
 
@@ -672,17 +772,23 @@ export default function Register({ departments }: RegisterProps) {
                             </div>
 
                             <div>
-                                <label htmlFor="college_campus" className={labelClass}>College/Campus *</label>
+                                <label htmlFor="college_campus" className={labelClass}>Campus *</label>
                                 <select
                                     id="college_campus"
-                                    value={data.college_campus}
-                                    onChange={(e) => setData('college_campus', e.target.value)}
+                                    value={selectedCampus}
+                                    onChange={(e) => {
+                                        setSelectedCampus(e.target.value);
+                                        const selectedCampusObj = campuses.find(c => c.id.toString() === e.target.value);
+                                        setData('college_campus', selectedCampusObj?.name || '');
+                                        setData('department_id', ''); // Reset department when campus changes
+                                        setData('course', ''); // Reset course when campus changes
+                                    }}
                                     className={selectClass}
                                     required
                                 >
-                                    <option value="">Select College/Campus</option>
-                                    {collegeOptions.map(c => (
-                                        <option key={c} value={c}>{c}</option>
+                                    <option value="">Select Campus</option>
+                                    {campuses.filter(c => c.is_active).map(campus => (
+                                        <option key={campus.id} value={campus.id.toString()}>{campus.name}</option>
                                     ))}
                                 </select>
                                 <InputError message={errors.college_campus} className="mt-1 text-red-300" />
@@ -729,30 +835,41 @@ export default function Register({ departments }: RegisterProps) {
                                 <select
                                     id="department_id"
                                     value={data.department_id}
-                                    onChange={(e) => setData('department_id', e.target.value)}
+                                    onChange={(e) => {
+                                        setData('department_id', e.target.value);
+                                        setData('course', ''); // Reset course when department changes
+                                    }}
                                     className={selectClass}
                                     required
+                                    disabled={!selectedCampus}
                                 >
                                     <option value="">Select Department</option>
-                                    {departments.map(d => (
+                                    {filteredDepartments.map(d => (
                                         <option key={d.id} value={d.id}>{d.name}</option>
                                     ))}
                                 </select>
                                 <InputError message={errors.department_id} className="mt-1 text-red-300" />
+                                {!selectedCampus && <p className="mt-1 text-xs text-gray-400">Please select a campus first</p>}
                             </div>
                         </div>
 
                         <div>
                             <label htmlFor="course" className={labelClass}>Course/Degree *</label>
-                            <TextInput
+                            <select
                                 id="course"
                                 value={data.course}
-                                className={inputClass}
-                                placeholder="e.g., BS Computer Science"
                                 onChange={(e) => setData('course', e.target.value)}
+                                className={selectClass}
                                 required
-                            />
+                                disabled={!data.department_id}
+                            >
+                                <option value="">Select Course</option>
+                                {filteredCourses.map(course => (
+                                    <option key={course.id} value={course.name}>{course.name} ({course.code})</option>
+                                ))}
+                            </select>
                             <InputError message={errors.course} className="mt-1 text-red-300" />
+                            {!data.department_id && <p className="mt-1 text-xs text-gray-400">Please select a department first</p>}
                         </div>
 
                         <div className="pt-4 border-t border-white/20">
@@ -1422,6 +1539,37 @@ export default function Register({ departments }: RegisterProps) {
                     </p>
                 </div>
             </form>
+
+            {/* Error Modal */}
+            {showErrorModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowErrorModal(false)}>
+                    <div className="bg-gradient-to-br from-red-900/90 to-red-800/90 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full border border-red-500/20" onClick={(e) => e.stopPropagation()}>
+                        <div className="p-6">
+                            <div className="flex items-start space-x-4">
+                                <div className="flex-shrink-0">
+                                    <svg className="h-10 w-10 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-xl font-bold text-white mb-2">Registration Error</h3>
+                                    <p className="text-red-100 text-sm leading-relaxed">
+                                        {submissionError}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-6 flex justify-end">
+                                <button
+                                    onClick={() => setShowErrorModal(false)}
+                                    className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-colors border border-white/20"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </GuestLayout>
     );
 }

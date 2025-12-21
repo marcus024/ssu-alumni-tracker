@@ -28,23 +28,21 @@ export default function Index({ auth, departments }: DepartmentsIndexProps) {
         <AdminLayout header="Departments Management">
             <Head title="Departments Management" />
 
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Departments Management</h2>
-                <Link href={route('admin.departments.create')}>
-                    <PrimaryButton>Add New Department</PrimaryButton>
-                </Link>
-            </div>
-
-            {/* Search */}
-            <div className="mb-6">
+            {/* Search Bar and Add Button */}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search departments..."
-                    className="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                    className="w-full sm:w-96 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
                 />
+                <Link
+                    href={route('admin.departments.create')}
+                    className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150"
+                >
+                    Add New Department
+                </Link>
             </div>
 
             {/* Departments Grid */}
@@ -62,6 +60,13 @@ export default function Index({ auth, departments }: DepartmentsIndexProps) {
                                             />
                                         )}
                                         <h3 className="text-xl font-bold mb-2 text-center">{department.name}</h3>
+                                        {department.campus && (
+                                            <div className="text-center mb-2">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                                                    {department.campus.name}
+                                                </span>
+                                            </div>
+                                        )}
                                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
                                             {department.description}
                                         </p>
