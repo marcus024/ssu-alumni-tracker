@@ -38,23 +38,30 @@ class SettingsController extends Controller
             $schoolInfo = new SchoolInfo();
         }
 
-        // Handle logo upload
+        // Update basic fields
+        $schoolInfo->total_teachers = $validated['total_teachers'];
+        $schoolInfo->total_departments = $validated['total_departments'];
+        $schoolInfo->total_branches = $validated['total_branches'];
+        $schoolInfo->years_established = $validated['years_established'];
+        $schoolInfo->mission = $validated['mission'];
+        $schoolInfo->vision = $validated['vision'];
+
+        // Handle logo upload - only update if a new file is provided
         if ($request->hasFile('logo')) {
             if ($schoolInfo->logo) {
                 Storage::disk('uploads')->delete($schoolInfo->logo);
             }
-            $validated['logo'] = $request->file('logo')->store('school', 'uploads');
+            $schoolInfo->logo = $request->file('logo')->store('school', 'uploads');
         }
 
-        // Handle hero image upload
+        // Handle hero image upload - only update if a new file is provided
         if ($request->hasFile('hero_image')) {
             if ($schoolInfo->hero_image) {
                 Storage::disk('uploads')->delete($schoolInfo->hero_image);
             }
-            $validated['hero_image'] = $request->file('hero_image')->store('hero', 'uploads');
+            $schoolInfo->hero_image = $request->file('hero_image')->store('hero', 'uploads');
         }
 
-        $schoolInfo->fill($validated);
         $schoolInfo->save();
 
         return redirect()->route('admin.settings.index')
